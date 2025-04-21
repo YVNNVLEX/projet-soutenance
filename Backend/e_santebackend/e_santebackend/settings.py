@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'qrcode',
+    'reportlab',
     'djoser'
 ]
 
@@ -107,7 +109,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'e_santedb',
         'USER': 'postgres',
-        'PASSWORD': 'yannalex2004',
+        'PASSWORD': 'yannalex',
         'HOST': 'localhost',
         'PORT': '5432',
     }
