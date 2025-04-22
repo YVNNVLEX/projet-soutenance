@@ -27,7 +27,7 @@ def GetDispoView(request):
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 def HostoView(request):
     serializer = HopitalSerializer(data=request.data)
     if serializer.is_valid():
@@ -36,6 +36,11 @@ def HostoView(request):
             "message": serializer.data,
             "status": status.HTTP_201_CREATED
         })
+    else:
+        return Response({
+                "errors": serializer.errors,
+                "status": status.HTTP_400_BAD_REQUEST
+            }) 
 
 @api_view(['POST'])
 def ConsultView(request):

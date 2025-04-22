@@ -5,12 +5,14 @@ import uuid
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     dateNaissance = serializers.DateField(required=False, format="%d/%m/%Y")
+    hopital_id = serializers.PrimaryKeyRelatedField(queryset=Hopital.objects.all(), required=False)
+    specialite = serializers.CharField(required=False)
 
     class Meta(BaseUserCreateSerializer.Meta):
         model = CustomUser
         fields = (
-            'id', 'email', 'password','username', 'nom', 'prenom',
-            'tel', 'type', 'photo', 'dateNaissance'
+            'id', 'email', 'password', 'username', 'nom', 'prenom',
+            'tel', 'type', 'photo', 'dateNaissance', 'hopital_id', 'specialite'
         )
         extra_kwargs = {
             "password": {"write_only": True},
@@ -18,18 +20,22 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         }
 
     def create(self, validated_data):
-        # Champs custom extraits
+        
+        hopital_id = validated_data.pop("hopital_id", None)
+        specialite = validated_data.pop("specialite", "")
+
+        user = super().create(validated_data)
+        
         nom = validated_data.pop("nom", "")
         prenom = validated_data.pop("prenom", "")
         tel = validated_data.pop("tel", "")
         type_user = validated_data.pop("type", "")
         photo = validated_data.pop("photo", None)
-        date_naissance = validated_data.pop("dateNaissance", None) 
+        date_naissance = validated_data.pop("dateNaissance", None)
 
-        # Création utilisateur de base
-        user = super().create(validated_data)
+        # Création de l'utilisateur
 
-        # Ajout des champs custom
+        # Ajout des champs personnalisés
         user.nom = nom
         user.prenom = prenom
         user.tel = tel
@@ -39,7 +45,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
             user.photo = photo
         user.save()
 
-        
+        # Création du sous-type lié
         if type_user == "patient":
             Patient.objects.create(
                 user=user,
@@ -52,10 +58,13 @@ class UserCreateSerializer(BaseUserCreateSerializer):
                 user=user,
                 praticien_id=str(uuid.uuid4()),
                 nom=nom,
-                prenom=prenom
+                prenom=prenom,
+                specialite=specialite,
+                hopital_id=hopital_id
             )
 
         return user
+
 
 class PraticienSerializer(serializers.ModelSerializer):
     class Meta:

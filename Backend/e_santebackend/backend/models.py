@@ -1,9 +1,37 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-class CustomUser(AbstractUser):
-    nom = models.CharField(max_length= 50)
-    prenom = models.CharField(max_length= 100)
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, tel, password=None, **extra_fields):
+        if not email:
+            raise ValueError("L'email est requis.")
+        if not tel:
+            raise ValueError("Le téléphone est requis.")
+        email = self.normalize_email(email)
+        user = self.model(email=email, tel=tel, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, tel, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Le superutilisateur doit avoir is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Le superutilisateur doit avoir is_superuser=True.')
+
+        return self.create_user(email=email, tel=tel, password=password, **extra_fields)
+
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    username = None  # Retire le champ "username"
+
+    nom = models.CharField(max_length=50)
+    prenom = models.CharField(max_length=100)
     dateNaissance = models.DateField(null=True, blank=True)
     photo = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     email = models.EmailField(unique=True)
@@ -23,8 +51,14 @@ class CustomUser(AbstractUser):
     type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
     sexe = models.CharField(max_length=1, choices=USER_SEXE_CHOICES)
 
+    # Champs nécessaires pour gérer les droits
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['tel']
+    
+    objects = CustomUserManager()
 
     def __str__(self):
         return f"{self.email or self.tel} ({self.type})"
@@ -41,24 +75,21 @@ class Patient(models.Model):
 class Hopital(models.Model):
     hopital_id = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100)
+    localisation = models.CharField(max_length=255)
     adresse = models.CharField(max_length=255)
+    commune = models.CharField(max_length=255)
+    ville = models.CharField(max_length=255)
 
     def __str__(self):
         return self.nom
 
 class Praticien(models.Model):
     
-    LANGUAGE_CHOICES = (
-        ('en', 'Anglais'),
-        ('fr', 'Français')
-    )
-    
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='praticien_profile')
     praticien_id = models.CharField(max_length=50, primary_key=True)
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     specialite = models.CharField(max_length=255)
-    langue = models.CharField(max_length=10, choices=LANGUAGE_CHOICES)
     hopital_id = models.ForeignKey(Hopital, on_delete= models.CASCADE)
 
 
