@@ -12,7 +12,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         model = CustomUser
         fields = (
             'id', 'email', 'password', 'username', 'nom', 'prenom',
-            'tel', 'type', 'photo', 'dateNaissance', 'hopital_id', 'specialite'
+            'tel', 'type', 'photo', 'dateNaissance', 'sexe', 'hopital_id', 'specialite'
         )
         extra_kwargs = {
             "password": {"write_only": True},
@@ -32,6 +32,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         type_user = validated_data.pop("type", "")
         photo = validated_data.pop("photo", None)
         date_naissance = validated_data.pop("dateNaissance", None)
+        sexe = validated_data.pop("sexe", "")
 
         # Création de l'utilisateur
 
@@ -41,6 +42,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         user.tel = tel
         user.type = type_user
         user.dateNaissance = date_naissance
+        user.sexe = sexe
         if photo:
             user.photo = photo
         user.save()

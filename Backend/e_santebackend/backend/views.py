@@ -27,24 +27,30 @@ def GetDispoView(request):
     return Response(serializer.data)
 
 
+@api_view(['POST'])
 @api_view(['POST', 'GET'])
 def HostoView(request):
-    serializer = HopitalSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({
-            "message": serializer.data,
-            "status": status.HTTP_201_CREATED
-        })
-    else:
-        return Response({
+    if request.method == 'POST':
+        serializer = HopitalSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({  # Ajout du return ici
+                "message": serializer.data,
+                "status": status.HTTP_201_CREATED
+            }, status=status.HTTP_201_CREATED)  # Inclure le status ici aussi
+        else:
+            return Response({
                 "errors": serializer.errors,
                 "status": status.HTTP_400_BAD_REQUEST
-            }) 
+            }, status=status.HTTP_400_BAD_REQUEST)  # Et ici
+    elif request.method == 'GET':
+        hopitaux = Hopital.objects.all()
+        serializer = HopitalSerializer(hopitaux, many=True)
+        return Response(serializer.data)
 
 @api_view(['POST'])
 def ConsultView(request):
-    serializer = HopitalSerializer(data=request.data)
+    serializer = ConsulSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response({

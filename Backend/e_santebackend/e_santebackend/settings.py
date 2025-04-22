@@ -109,8 +109,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'e_santedb',
         'USER': 'postgres',
-        'PASSWORD': 'yannalex',
-        'HOST': 'localhost',
+        'PASSWORD': 'yannalex2004',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
