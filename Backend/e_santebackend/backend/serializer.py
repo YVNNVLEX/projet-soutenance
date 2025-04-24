@@ -5,14 +5,14 @@ import uuid
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     dateNaissance = serializers.DateField(required=False, format="%d/%m/%Y")
-    hopital_id = serializers.PrimaryKeyRelatedField(queryset=Hopital.objects.all(), required=False)
+    hopital = serializers.PrimaryKeyRelatedField(queryset=Hopital.objects.all(), required=False)
     specialite = serializers.CharField(required=False)
 
     class Meta(BaseUserCreateSerializer.Meta):
         model = CustomUser
         fields = (
             'id', 'email', 'password', 'username', 'nom', 'prenom',
-            'tel', 'type', 'photo', 'dateNaissance', 'sexe', 'hopital_id', 'specialite'
+            'tel', 'type', 'photo', 'dateNaissance', 'sexe', 'hopital', 'specialite'
         )
         extra_kwargs = {
             "password": {"write_only": True},
@@ -21,8 +21,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
     def create(self, validated_data):
         
-        hopital_id = validated_data.pop("hopital_id", None)
-        specialite = validated_data.pop("specialite", "")
+        hopital = validated_data.pop("hopital", None)
 
         user = super().create(validated_data)
         
@@ -33,6 +32,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         photo = validated_data.pop("photo", None)
         date_naissance = validated_data.pop("dateNaissance", None)
         sexe = validated_data.pop("sexe", "")
+        specialite = validated_data.pop("specialite", "")
 
         # Création de l'utilisateur
 
@@ -45,24 +45,30 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         user.sexe = sexe
         if photo:
             user.photo = photo
+            
+        if hopital:
+            user.hopital = hopital
+            
+        user.specialite = specialite
+        
         user.save()
 
-        # Création du sous-type lié
+
         if type_user == "patient":
             Patient.objects.create(
                 user=user,
-                patient_id=str(uuid.uuid4()),
+                patient_id= f"PAT-{str(uuid.uuid4())}",
                 nom=nom,
                 prenom=prenom
             )
         elif type_user == "praticien":
             Praticien.objects.create(
                 user=user,
-                praticien_id=str(uuid.uuid4()),
+                praticien_id=f"MED-{str(uuid.uuid4())}",
                 nom=nom,
                 prenom=prenom,
                 specialite=specialite,
-                hopital_id=hopital_id
+                hopital_id=user.hopital_id
             )
 
         return user
@@ -80,7 +86,7 @@ class PatientSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class DispoSerializer(serializers.HyperlinkedModelSerializer):
+class DispoSerializer(serializers.ModelSerializer):
     praticien = PraticienSerializer(read_only=True)
     praticien_id = serializers.PrimaryKeyRelatedField(
         queryset=Praticien.objects.all(), write_only=True, source='praticien'
@@ -88,6 +94,7 @@ class DispoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Disponibilite
         fields = "__all__"
+        
         
 class HopitalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -95,12 +102,19 @@ class HopitalSerializer(serializers.ModelSerializer):
         fields = "__all__"
         
 
-class ConsulSerializer(serializers.HyperlinkedModelSerializer):
-    praticien = PraticienSerializer(read_only=True)
-    praticien_id = serializers.PrimaryKeyRelatedField(
-        queryset=Praticien.objects.all(), write_only=True, source='praticien'
+class ConsulSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(
+        input_formats=['%d-%m-%Y', '%d/%m/%Y', '%Y-%m-%d'],
+        required=True
     )
-    patient = PatientSerializer(read_only=True)
+    patient = PatientSerializer(read_only=True) 
+    patient_id = serializers.PrimaryKeyRelatedField(
+        queryset=Patient.objects.all(), 
+        source="patient", 
+        write_only=True  
+    )
+    Disponibilite = DispoSerializer(read_only=True)
+
     class Meta:
-        model = Disponibilite
+        model = Consultation
         fields = "__all__"

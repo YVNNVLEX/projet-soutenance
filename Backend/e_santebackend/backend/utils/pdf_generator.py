@@ -7,7 +7,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.lib.utils import ImageReader
 
-def generate_pdf_base(title, praticien_info, patient_info, prestation_info, qr_data):
+def generate_pdf_base(title, praticien_info, patient_info, consultation_info, qr_data):
     buffer = io.BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
@@ -31,18 +31,16 @@ def generate_pdf_base(title, praticien_info, patient_info, prestation_info, qr_d
     # Infos praticien
     p.setFont("Helvetica", 10)
     p.drawString(1.5*cm, height - 5*cm, praticien_info["nom"])
-    p.drawString(1.5*cm, height - 5.5*cm, praticien_info["adresse"])
 
     # Infos patient & date
-    p.drawString(11*cm, height - 5*cm, f"Patient : {patient_info['nom']}")
-    p.drawString(11*cm, height - 5.5*cm, f"Date : {patient_info['date']}")
+    p.drawString(11*cm, height - 5*cm, f"Patient : {patient_info['nom']} {patient_info['prenom']}")
+    p.drawString(11*cm, height - 5.5*cm, f"Date : {consultation_info['date']} à {consultation_info['heure']}")
 
     # Prestation
-    p.setFont("Helvetica-Bold", 12)
-    p.drawString(1.5*cm, height - 8*cm, "Détails de la prestation :")
-    p.setFont("Helvetica", 11)
-    p.drawString(1.5*cm, height - 9*cm, prestation_info["description"])
-    p.drawString(1.5*cm, height - 10*cm, f"Montant : {prestation_info['montant']}")
+    # p.setFont("Helvetica-Bold", 12)
+    # p.drawString(1.5*cm, height - 8*cm, "Détails de la prestation :")
+    # p.setFont("Helvetica", 11)
+    # p.drawString(1.5*cm, height - 9*cm, consultation_info["description"])
 
     # QR Code
     p.drawImage(qr_img, x=width - 6*cm, y=3*cm, width=4.5*cm, height=4.5*cm)

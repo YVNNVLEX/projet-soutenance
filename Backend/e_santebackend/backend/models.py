@@ -28,7 +28,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    username = None  # Retire le champ "username"
+    username = None 
 
     nom = models.CharField(max_length=50)
     prenom = models.CharField(max_length=100)
@@ -36,6 +36,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     photo = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     email = models.EmailField(unique=True)
     tel = models.CharField(max_length=10, unique=True)
+    hopital = models.ForeignKey('backend.Hopital', on_delete=models.SET_NULL, null=True, blank=True)
+    specialite = models.CharField(max_length=100, blank=True)
 
     USER_TYPE_CHOICES = (
         ('patient', 'Patient'),
@@ -90,17 +92,8 @@ class Praticien(models.Model):
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     specialite = models.CharField(max_length=255)
-    hopital_id = models.ForeignKey(Hopital, on_delete= models.CASCADE)
+    hopital = models.ForeignKey(Hopital, on_delete= models.CASCADE)
 
-
-class Consultation(models.Model):
-    consultation_id = models.AutoField(primary_key=True)
-    date_consultation = models.DateField()
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    praticien = models.ForeignKey(Praticien, on_delete=models.CASCADE, null=True, blank=True)
-
-    def __str__(self):
-        return f"Consultation {self.consultation_id} - {self.date_consultation}"
 
 class Disponibilite(models.Model):
     disponibilite_id = models.AutoField(primary_key=True)
@@ -112,6 +105,15 @@ class Disponibilite(models.Model):
     def __str__(self):
         return f"{self.praticien} - {self.date_disponibilite}"
 
+
+class Consultation(models.Model):
+    consultation_id = models.AutoField(primary_key=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    date = models.DateField()
+    heure = models.TimeField()
+    disponibilite = models.ForeignKey(Disponibilite, on_delete=models.CASCADE)
+    
+    
 class Paiement(models.Model):
     paiement_id = models.AutoField(primary_key=True)
     montant = models.DecimalField(max_digits=10, decimal_places=2)
@@ -124,8 +126,8 @@ class Paiement(models.Model):
 class Ticket(models.Model):
     ticket_id = models.AutoField(primary_key=True)
     date_ticket = models.DateField()
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     consultation = models.ForeignKey(Consultation, on_delete=models.CASCADE)
+    url = models.FileField(upload_to='document/', null=True, blank=True)
 
     def __str__(self):
         return f"Ticket {self.ticket_id} - {self.date_ticket}"
