@@ -1,5 +1,4 @@
 export interface patientProfile {
-    username: string,
     nom: string,
     prenom : string,
     email : string,

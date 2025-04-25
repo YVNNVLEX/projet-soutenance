@@ -3,9 +3,6 @@ import { z } from "zod"
 
 
 export const patientUserSchema = z.object({
-    username: z.string().min(2).max(50, {
-        message: "Ne doit pas dépassé"
-    }),
     nom: z.string().min(2).max(50),
     prenom: z.string().min(2).max(50),
     dateNaissance : z.date(),
@@ -18,3 +15,13 @@ export const patientUserSchema = z.object({
 }).refine(
     data => data.password === data.confirmPassword,
 )
+
+
+enum GenderEnum {
+    female = "female",
+    male = "male",
+}  
+export interface IFormInput {
+    firstName: string
+    gender: GenderEnum
+}
