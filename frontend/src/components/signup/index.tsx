@@ -105,9 +105,9 @@ export default function InscriptionForm() {
   }
 
   return (
-    <div className="card w-full max-w-3xl mx-auto bg-base-100 shadow-sm">
-      <div className="card-body">
-        <div className="flex items-center">
+    <div className="w-full max-w-3xl mx-auto bg-base-100 shadow-sm">
+      <div className="card-body bg-white border-2">
+        <div className="flex justify-center">
           {currentStep > 1 && (
             <motion.button
               whileHover={{ scale: isLoadingStep2 ? 1 : 1.1 }}

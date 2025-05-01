@@ -53,7 +53,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
                   <FormControl>
                     <Input
                       placeholder="Entrez votre nom"
-                      className="input input-bordered w-full"
+                      className="input input-bordered w-full h-[50px]"
                       {...field}
                     />
                   </FormControl>
@@ -72,7 +72,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
                     <Input
                       placeholder="Entrer votre prenom"
                       type="password"
-                      className="input input-bordered w-full"
+                      className="input input-bordered w-full h-[50px]"
                       {...field}
                     />
                   </FormControl>
@@ -92,7 +92,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
                     <Input
                       placeholder="Entrez votre date de Naissance"
                       type="date"
-                      className="input input-bordered w-full"
+                      className="input input-bordered w-full h-[50px]"
                       {...field}
                     />
                   </FormControl>
@@ -109,14 +109,14 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
                   <FormLabel>Sélectionner votre sexe</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selectionner M ou F" 
-                            className="input input-bordered w-full"
-                          />
+                        <SelectTrigger
+                        className="input input-bordered w-full h-[50px] cursor-pointer"
+                        >
+                          <SelectValue placeholder="Selectionner M ou F"/>
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                          <SelectItem value="om">Masculin</SelectItem>
+                      <SelectContent className="cursor-pointer">
+                          <SelectItem value="m">Masculin</SelectItem>
                           <SelectItem value="f">Feminin</SelectItem>
                       </SelectContent>
                   </Select>
@@ -136,7 +136,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
                   <Input
                     placeholder="Entrez votre numero "
                     type="tel"
-                    className="input input-bordered w-full"
+                    className="input input-bordered w-full h-[50px]"
                     {...field}
                   />
                 </FormControl>
@@ -146,7 +146,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
           />
 
           <motion.div whileHover={{ scale: isLoading ? 1 : 1.02 }} whileTap={{ scale: isLoading ? 1 : 0.98 }}>
-            <Button type="submit" className="btn btn-primary w-full" disabled={isLoading}>
+            <Button type="submit" className="cursor-pointer outline-none hover:bg-[#00aed6]/90 bg-[#00aed6] w-full h-[50px]" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <span className="loading loading-spinner loading-sm mr-2"></span>
@@ -167,7 +167,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
             type="button"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="btn btn-outline btn-circle mx-auto flex items-center justify-center"
+            className="bg-white border-2 btn-circle mx-auto flex items-center justify-center cursor-pointer"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
               <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">

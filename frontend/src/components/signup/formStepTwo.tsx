@@ -43,7 +43,7 @@ export function FormStep2({ defaultValues, onSubmit, isLoading, direction }: For
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="xxxxxxx@gmail.com" className="input input-bordered w-full" {...field} />
+                  <Input placeholder="xxxxxxx@gmail.com" className="input input-bordered w-full h-[50px]" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -55,9 +55,9 @@ export function FormStep2({ defaultValues, onSubmit, isLoading, direction }: For
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Date de naissance</FormLabel>
+                <FormLabel>Mot de Passe</FormLabel>
                 <FormControl>
-                  <Input type="date" className="input input-bordered w-full" {...field} />
+                  <Input type="password" className="input input-bordered w-full h-[50px]" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -71,7 +71,7 @@ export function FormStep2({ defaultValues, onSubmit, isLoading, direction }: For
               <FormItem>
                 <FormLabel>Confirmer Mot de Passe</FormLabel>
                 <FormControl>
-                  <Input type="date" className="input input-bordered w-full" {...field} />
+                  <Input type="password" className="input input-bordered w-full h-[50px]" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -79,7 +79,7 @@ export function FormStep2({ defaultValues, onSubmit, isLoading, direction }: For
           />
 
           <motion.div whileHover={{ scale: isLoading ? 1 : 1.02 }} whileTap={{ scale: isLoading ? 1 : 0.98 }}>
-            <Button type="submit" className="btn btn-primary w-full" disabled={isLoading}>
+            <Button type="submit" className="h-[50px] cursor-pointer hover:bg-[#00aed6]\90 bg-[#00aed6] w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <span className="loading loading-spinner loading-sm mr-2"></span>

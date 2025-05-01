@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import {Raleway, Poppins } from "next/font/google";
+import { Raleway } from "next/font/google";
 import "./globals.css";
 
 const raleway = Raleway({
-  variable: "--font-raleway",
   subsets: ["latin"],
   weight: "400",
+  display: "swap"
 });
 
 
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${raleway.variable} antialiased`}
+        className={`${raleway.className} antialiased`}
       >
         {children}
       </body>

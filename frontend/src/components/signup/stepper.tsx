@@ -28,7 +28,7 @@ export function Stepper({ currentStep, totalSteps }: StepperProps) {
             {/* Connector line */}
             {index < totalSteps - 1 && (
               <motion.div
-                initial={{ scaleX: 0 }}
+                initial={{ scaleX: 0 , width : 0}}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.4, delay: index * 0.1 + 0.2 }}
                 className={`flex-1 h-1 origin-left ${isCompleted ? "bg-secondary" : "bg-gray-200"}`}
