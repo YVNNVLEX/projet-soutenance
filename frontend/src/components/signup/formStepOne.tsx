@@ -53,6 +53,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
                   <FormControl>
                     <Input
                       placeholder="Entrez votre nom"
+                      type="text"
                       className="input input-bordered w-full h-[50px]"
                       {...field}
                     />
@@ -71,7 +72,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
                   <FormControl>
                     <Input
                       placeholder="Entrer votre prenom"
-                      type="password"
+                      type="text"
                       className="input input-bordered w-full h-[50px]"
                       {...field}
                     />
