@@ -51,11 +51,8 @@ export default function InscriptionForm() {
     setError(null)
 
     try {
-      // Vérifier si l'email existe déjà (simulation)
-      // Dans un cas réel, vous pourriez avoir un endpoint API pour vérifier cela
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      // Mettre à jour les données du formulaire et passer à l'étape suivante
       updateFormData(data)
       goToNextStep()
     } catch (error) {
@@ -105,8 +102,8 @@ export default function InscriptionForm() {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-base-100 shadow-sm">
-      <div className="card-body bg-white border-2">
+    <div className="w-full max-w-3xl mx-auto bg-base-100 shadow-sm border-2 rounded-lg">
+      <div className="card-body bg-white rounded-lg">
         <div className="flex justify-center">
           {currentStep > 1 && (
             <motion.button

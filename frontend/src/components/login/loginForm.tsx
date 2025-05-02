@@ -149,7 +149,7 @@ export default function LoginForm() {
                 type="button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="cursor-pointer bg-white mx-auto flex items-center justify-center"
+                className="cursor-pointer bg-white mx-auto flex items-center justify-center border-2 p-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                   <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">

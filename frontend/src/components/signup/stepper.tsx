@@ -13,7 +13,7 @@ export function Stepper({ currentStep, totalSteps }: StepperProps) {
         const isActive = stepNumber === currentStep
 
         return (
-          <div key={index} className="flex items-center w-full">
+          <div key={index} className={`flex items-center ${index % 2 === 0 ? "w-full" : null }`}>
             {/* Step circle */}
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}

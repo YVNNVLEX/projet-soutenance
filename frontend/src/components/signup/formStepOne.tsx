@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -168,7 +169,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
             type="button"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-white border-2 btn-circle mx-auto flex items-center justify-center cursor-pointer"
+            className="bg-white border-2 btn-circle mx-auto flex items-center justify-center cursor-pointer p-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
               <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
@@ -192,6 +193,14 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
             </svg>
           </motion.button>
         </form>
+        <div className="text-center mt-4">
+                <p className="text-sm text-muted-foreground">
+                  Vous deja un compte ?{" "}
+                  <Link href="/patient/login" className="text-primary hover:underline">
+                    Se Connecter
+                  </Link>
+                </p>
+         </div>
       </Form>
     </motion.div>
   )

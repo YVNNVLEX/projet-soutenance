@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -79,7 +80,7 @@ export function FormStep2({ defaultValues, onSubmit, isLoading, direction }: For
           />
 
           <motion.div whileHover={{ scale: isLoading ? 1 : 1.02 }} whileTap={{ scale: isLoading ? 1 : 0.98 }}>
-            <Button type="submit" className="h-[50px] cursor-pointer hover:bg-[#00aed6]\90 bg-[#00aed6] w-full" disabled={isLoading}>
+            <Button type="submit" className="p-2 h-[50px] cursor-pointer hover:bg-[#00aed6]\90 bg-[#00aed6] w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <span className="loading loading-spinner loading-sm mr-2"></span>
@@ -94,6 +95,14 @@ export function FormStep2({ defaultValues, onSubmit, isLoading, direction }: For
             </Button>
           </motion.div>
         </form>
+        <div className="text-center mt-4">
+                <p className="text-sm text-muted-foreground">
+                  Vous deja un compte ?{" "}
+                  <Link href="/patient/login" className="text-primary hover:underline">
+                    Se Connecter
+                  </Link>
+                </p>
+         </div>
       </Form>
     </motion.div>
   )
