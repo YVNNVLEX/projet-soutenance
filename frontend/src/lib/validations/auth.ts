@@ -17,7 +17,7 @@ export const registerStep1Schema = z
       { message: "Vous devez avoir au moins 12 ans" },
     ),
     sexe: z.string(),
-    telephone: z
+    tel: z
       .string()
       .min(1, { message: "Le numéro de téléphone est requis" })
       .regex(/^\+?[0-9]{8,15}$/, {
@@ -29,7 +29,7 @@ export const registerStep1Schema = z
 
 export const registerStep2Schema = z.object({
   email: z.string().min(1, { message: "L'email est requis" }).email({ message: "Veuillez entrer une adresse email valide" }),
-  type: z.string(),
+  type: z.string().optional(),
   password: z.string().min(8, { message: "Le mot de passe doit contenir au moins 8 caractères" })
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
         message: "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre",

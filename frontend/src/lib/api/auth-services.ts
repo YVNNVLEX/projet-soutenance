@@ -1,31 +1,43 @@
 import axiosInstance from "./axios-instance"
 import type { LoginInput, RegisterFormData } from "@/types/auth"
+import axios from "axios"
+import { jwtDecode } from "jwt-decode"
 
 /**
- * Service d'authentification pour interagir avec l'API Django Djoser
+ * Service d'authentification pour interagir avec l'API Django Djoser avec JWT
  */
 export const AuthService = {
   /**
-   * Connexion utilisateur
+   * Connexion utilisateur avec JWT
    */
   login: async (credentials: LoginInput) => {
     try {
-      const response = await axiosInstance.post("/auth/token/login/", {
+      // Utiliser l'endpoint JWT de Djoser
+      const response = await axiosInstance.post("/auth/jwt/create/", {
         email: credentials.email,
         password: credentials.password,
       })
 
-      const { auth_token } = response.data
+      const { access, refresh } = response.data
 
-      if (auth_token) {
-        localStorage.setItem("authToken", auth_token)
+      if (access && refresh) {
+        // Stocker les tokens JWT
+        localStorage.setItem("accessToken", access)
+        localStorage.setItem("refreshToken", refresh)
 
-        // Récupérer les informations de l'utilisateur
+        // Décoder le token pour obtenir des informations sur l'utilisateur
+        const decodedToken = jwtDecode(access)
+
+        // Récupérer les informations complètes de l'utilisateur
         const userResponse = await axiosInstance.get("/auth/users/me/")
-        return { token: auth_token, user: userResponse.data }
+        return {
+          tokens: { access, refresh },
+          user: userResponse.data,
+          decodedToken,
+        }
       }
 
-      return { token: auth_token, user: null }
+      throw new Error("Tokens d'authentification manquants")
     } catch (error) {
       console.error("Erreur lors de la connexion:", error)
       throw error
@@ -33,24 +45,83 @@ export const AuthService = {
   },
 
   /**
+   * Rafraîchir le token JWT
+   */
+  refreshToken: async () => {
+    try {
+      const refreshToken = localStorage.getItem("refreshToken")
+
+      if (!refreshToken) {
+        throw new Error("Refresh token manquant")
+      }
+
+      const response = await axiosInstance.post("/auth/jwt/refresh/", {
+        refresh: refreshToken,
+      })
+
+      const { access } = response.data
+
+      if (access) {
+        localStorage.setItem("accessToken", access)
+        return access
+      }
+
+      throw new Error("Access token manquant dans la réponse")
+    } catch (error) {
+      console.error("Erreur lors du rafraîchissement du token:", error)
+      // En cas d'échec, déconnecter l'utilisateur
+      AuthService.logout()
+      throw error
+    }
+  },
+
+  /**
+   * Vérifier la validité d'un token JWT
+   */
+  verifyToken: async (token: string) => {
+    try {
+      await axiosInstance.post("/auth/jwt/verify/", { token })
+      return true
+    } catch (error) {
+      console.error("Token invalide:", error)
+      return false
+    }
+  },
+
+  /**
    * Inscription utilisateur
    */
   register: async (userData: RegisterFormData) => {
+    console.log("AuthService.register appelé avec:", userData)
     try {
       // Adapter les données au format attendu par Djoser
       const djoserData = {
+        tel: userData.tel,
         email: userData.email,
         password: userData.password,
-        re_password: userData.confirmPassword,
-        phone_number: userData.telephone,
-        full_name: userData.fullName,
-        birth_date: userData.birthdate,
+        nom: userData.nom,
+        prenom: userData.prenom,
+        dateNaissance: userData.dateNaissance,
+        sexe:userData.sexe,
+        type:userData.type
       }
 
+      console.log("Données formatées pour Djoser:", djoserData)
+      console.log("URL de l'API:", `${axiosInstance.defaults.baseURL}/auth/users/`)
+
       const response = await axiosInstance.post("/auth/users/", djoserData)
+      console.log("Réponse de l'API:", response.data)
       return response.data
     } catch (error) {
-      console.error("Erreur lors de l'inscription:", error)
+      console.error("Erreur détaillée lors de l'inscription:", error)
+      if (axios.isAxiosError(error)) {
+        console.error("Détails de l'erreur Axios:", {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          headers: error.response?.headers,
+        })
+      }
       throw error
     }
   },
@@ -60,12 +131,15 @@ export const AuthService = {
    */
   logout: async () => {
     try {
-      await axiosInstance.post("/auth/token/logout/")
-      localStorage.removeItem("authToken")
+      // Avec JWT, il n'y a pas d'endpoint de déconnexion côté serveur
+      // On supprime simplement les tokens côté client
+      localStorage.removeItem("accessToken")
+      localStorage.removeItem("refreshToken")
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error)
-      // Supprimer le token même en cas d'erreur
-      localStorage.removeItem("authToken")
+      // Supprimer les tokens même en cas d'erreur
+      localStorage.removeItem("accessToken")
+      localStorage.removeItem("refreshToken")
       throw error
     }
   },
@@ -74,7 +148,22 @@ export const AuthService = {
    * Vérifier si l'utilisateur est connecté
    */
   isAuthenticated: () => {
-    return !!localStorage.getItem("authToken")
+    const accessToken = localStorage.getItem("accessToken")
+
+    if (!accessToken) {
+      return false
+    }
+
+    try {
+      // Vérifier si le token est expiré
+      const decodedToken = jwtDecode(accessToken)
+      const currentTime = Date.now() / 1000
+
+      return decodedToken.exp ? decodedToken.exp > currentTime : false
+    } catch (error) {
+      console.error("Erreur lors de la vérification du token:", error)
+      return false
+    }
   },
 
   /**

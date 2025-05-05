@@ -25,7 +25,8 @@ export function FormStep2({ defaultValues, onSubmit, isLoading, direction }: For
     resolver: zodResolver(registerStep2Schema),
     defaultValues,
   })
-
+  
+  console.log("formState.errors", form.formState.errors)
   return (
     <motion.div
       key="step2"
@@ -36,7 +37,12 @@ export function FormStep2({ defaultValues, onSubmit, isLoading, direction }: For
       exit="exit"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(
+          (data)=>{
+            console.log("FormStep2 submitted data:", data)
+            onSubmit(data)
+          }
+        )} className="space-y-6">
           <FormField
             control={form.control}
             name="email"
@@ -97,7 +103,7 @@ export function FormStep2({ defaultValues, onSubmit, isLoading, direction }: For
         </form>
         <div className="text-center mt-4">
                 <p className="text-sm text-muted-foreground">
-                  Vous deja un compte ?{" "}
+                  Vous avez deja un compte ?{" "}
                   <Link href="/patient/login" className="text-primary hover:underline">
                     Se Connecter
                   </Link>

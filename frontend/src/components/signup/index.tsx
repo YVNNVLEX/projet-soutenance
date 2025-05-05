@@ -30,10 +30,9 @@ export default function InscriptionForm() {
     updateFormData,
     setIsLoadingStep1,
     setIsLoadingStep2,
-    getCompleteFormData,
   } = useMultiStepForm({
     initialData: {
-      telephone: "",
+      tel: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -41,7 +40,7 @@ export default function InscriptionForm() {
       prenom:"",
       dateNaissance: "",
       sexe:"",
-      type:""
+      type:"patient"
     },
     totalSteps: TOTAL_STEPS,
   })
@@ -64,25 +63,25 @@ export default function InscriptionForm() {
   }
 
   const handleSubmitStep2 = async (data: RegisterStep2Input) => {
+    console.log("Submitting step 2:", data)
     setIsLoadingStep2(true)
     setError(null)
 
     try {
-      // Mettre à jour les données du formulaire avec les données de l'étape 2
       updateFormData(data)
+      console.log("Updated Form: ", formData)
 
       // Récupérer les données complètes du formulaire (étape 1 + étape 2)
       const completeFormData = {
-        ...getCompleteFormData(),
+        ...formData,
         ...data,
       }
+      console.log("Complete form data to send:", completeFormData)
 
       // Envoyer toutes les données à l'API en une seule requête
       await AuthService.register(completeFormData as any)
-
-      // Rediriger vers la page de connexion après inscription réussie
-      alert("Inscription réussie ! Veuillez vous connecter.")
-      router.push("/login")
+      console.log("Inscription reussi")
+      router.push("/patient/")
     } catch (error: any) {
       console.error("Erreur lors de l'enregistrement des données:", error)
 
@@ -145,7 +144,7 @@ export default function InscriptionForm() {
             {currentStep === 1 && (
               <FormStep1
                 defaultValues={{
-                  telephone: formData.telephone || "",
+                  tel: formData.tel || "",
                   nom: formData.nom || "",
                   prenom: formData.prenom || "",
                   sexe: formData.sexe || "",

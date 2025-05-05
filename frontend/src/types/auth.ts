@@ -31,7 +31,8 @@ export interface StepperProps {
 
 export interface AuthState {
   user: any | null
-  token: string | null
+  accessToken: string | null
+  refreshTokenValue: string | null
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null

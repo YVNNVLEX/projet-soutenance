@@ -130,7 +130,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
 
           <FormField
             control={form.control}
-            name="telephone"
+            name="tel"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Telephone</FormLabel>
@@ -195,7 +195,7 @@ export function FormStep1({ defaultValues, onSubmit, isLoading, direction }: For
         </form>
         <div className="text-center mt-4">
                 <p className="text-sm text-muted-foreground">
-                  Vous deja un compte ?{" "}
+                  Vous avez deja un compte ?{" "}
                   <Link href="/patient/login" className="text-primary hover:underline">
                     Se Connecter
                   </Link>
