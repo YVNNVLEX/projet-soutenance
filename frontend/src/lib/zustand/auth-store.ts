@@ -109,7 +109,6 @@ export const useAuthStore = create<
 )
 
 export function useAuthCheck() {
-  // Utilisation recommandée de la sélection Zustand
   const checkAuth = useAuthStore((state) => state.checkAuth)
 
   useEffect(() => {
