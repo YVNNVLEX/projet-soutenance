@@ -4,9 +4,9 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion } from "framer-motion"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
+
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,6 +18,7 @@ import { useAuthStore } from "@/lib/zustand/auth-store"
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const { login } = useAuthStore()
 
@@ -34,15 +35,12 @@ export default function LoginForm() {
     setError(null)
 
     try {
-      // Utiliser le service d'authentification pour se connecter
       await login(data)
-
-      // Rediriger vers le tableau de bord après connexion réussie
-      router.push("/dashboard")
+      router.push("/praticien/dashboard")
     } catch (error: any) {
       console.error("Erreur de connexion:", error)
 
-      // Afficher un message d'erreur plus précis si disponible
+      
       if (error.response?.data) {
         const errorData = error.response.data
         setError(errorData.detail || errorData.non_field_errors?.[0] || "Identifiants invalides")
@@ -109,12 +107,26 @@ export default function LoginForm() {
                   <FormItem>
                     <FormLabel>Mot de passe</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Entrez votre mot de passe"
-                        type="password"
-                        className="input input-bordered w-full h-[50px]"
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          placeholder="Entrez votre mot de passe"
+                          type={showPassword ? "text" : "password"}
+                          className="input input-bordered w-full h-[50px] pr-12"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          tabIndex={-1}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
+                          onClick={() => setShowPassword((v) => !v)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="w-5 h-5 animate-pulse" />
+                          ) : (
+                            <Eye className="w-5 h-5 animate-pulse" />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

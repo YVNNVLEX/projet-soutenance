@@ -14,10 +14,6 @@ export default function LoginPraticienPage() {
         <div className="absolute inset-0 bg-black/50" />
       </div>
 
-      {/* <div className="z-10 w-full max-w-md mx-auto mb-8">
-        <Image src="/logo.png" alt="BookMyDoctor" width={250} height={100} className="mx-auto" />
-      </div> */}
-
       <LoginForm />
     </main>
   )

@@ -22,7 +22,7 @@ interface FormValues {
 export default function DisponibilitePage() {
   const [calendarDate, setCalendarDate] = useState<Date | undefined>(new Date());
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Réinitialiser l'heure à minuit pour une comparaison précise
+  today.setHours(0, 0, 0, 0); 
 
   const form = useForm<FormValues>({
     defaultValues: {
@@ -80,7 +80,7 @@ export default function DisponibilitePage() {
             <p className="text-muted-foreground mb-4 text-sm">Définissez vos heures de disponibilité pour les dates sélectionnées</p>
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
-                <label className="block text-xs mb-1 font-medium">Date modèle</label>
+                <label className="block text-xs mb-1 font-medium">Date disponibilité</label>
                 <div className="relative">
                   <Input
                     type="text"

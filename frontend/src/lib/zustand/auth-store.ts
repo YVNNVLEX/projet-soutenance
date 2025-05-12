@@ -28,17 +28,16 @@ export const useAuthStore = create<
       login: async (credentials) => {
         set({ isLoading: true, error: null })
         try {
-          const { tokens, user } = await AuthService.login(credentials)
+          const { user } = await AuthService.login(credentials)
           set({
-            accessToken: tokens.access,
-            refreshTokenValue: tokens.refresh,
             user,
             isAuthenticated: true,
             isLoading: false,
           })
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { detail?: string } } }
           set({
-            error: error.response?.data?.detail || "Échec de l'authentification",
+            error: err.response?.data?.detail || "Échec de l'authentification",
             isLoading: false,
           })
           throw error
@@ -49,15 +48,14 @@ export const useAuthStore = create<
         set({ isLoading: true })
         try {
           await AuthService.logout()
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const err = error as { response?: { data?: { detail?: string } } }
           set({
-            error: error.response?.data?.detail || "Échec de la déconnexion",
+            error: err.response?.data?.detail || "Échec de la déconnexion",
           })
         } finally {
           set({
             user: null,
-            accessToken: null,
-            refreshTokenValue: null,
             isAuthenticated: false,
             isLoading: false,
           })
@@ -66,8 +64,7 @@ export const useAuthStore = create<
 
       refreshToken: async () => {
         try {
-          const tokens = await AuthService.refreshToken()
-          set({ accessToken: tokens.access, refreshTokenValue: tokens.refresh })
+          await AuthService.refreshToken()
         } catch (error) {
           await get().logout()
           throw error
@@ -98,8 +95,6 @@ export const useAuthStore = create<
     {
       name: "auth-storage",
       partialize: (state) => ({
-        accessToken: state.accessToken,
-        refreshTokenValue: state.refreshTokenValue,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
