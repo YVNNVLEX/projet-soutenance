@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import jwtDecode  from "jwt-decode"
+import { jwtDecode } from "jwt-decode"
 
 // Routes qui nécessitent une authentification
 const protectedRoutes = ["/patient", "/praticien/dashboard"]
@@ -17,16 +17,22 @@ export function middleware(request: NextRequest) {
   // Vérifier si l'utilisateur est authentifié
   const isAuthenticated = accessToken ? isTokenValid(accessToken) : false
 
-  // Rediriger les utilisateurs non authentifiés vers la page de connexion
-  if (protectedRoutes.some((route) => pathname.startsWith(route)) && !isAuthenticated) {
-    const url = new URL("/patient/login", request.url)
+  // Vérifier si la route actuelle nécessite une authentification
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
+  const isAuthRoute = authRoutes.some((route) => pathname === route)
+
+  // Rediriger les utilisateurs non authentifiés vers la page de connexion appropriée
+  if (isProtectedRoute && !isAuthenticated) {
+    const loginPath = pathname.startsWith("/praticien") ? "/praticien/login" : "/patient/login"
+    const url = new URL(loginPath, request.url)
     url.searchParams.set("callbackUrl", encodeURI(pathname))
     return NextResponse.redirect(url)
   }
 
-  // Rediriger les utilisateurs authentifiés vers le tableau de bord s'ils tentent d'accéder aux pages d'authentification
-  if (authRoutes.some((route) => pathname === route) && isAuthenticated) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
+  // Rediriger les utilisateurs authentifiés vers le tableau de bord approprié
+  if (isAuthRoute && isAuthenticated) {
+    const dashboardPath = pathname.includes("praticien") ? "/praticien/dashboard" : "/patient/dashboard"
+    return NextResponse.redirect(new URL(dashboardPath, request.url))
   }
 
   return NextResponse.next()
@@ -38,9 +44,14 @@ function isTokenValid(token: string): boolean {
     const decodedToken = jwtDecode<{ exp: number }>(token)
     const currentTime = Date.now() / 1000
 
-    return decodedToken.exp > currentTime
+    // Vérifier si le token n'est pas expiré
+    if (decodedToken.exp <= currentTime) {
+      return false
+    }
+
+    return true
   } catch (error) {
-    console.log(error);
+    console.error("Erreur lors de la validation du token:", error)
     return false
   }
 }

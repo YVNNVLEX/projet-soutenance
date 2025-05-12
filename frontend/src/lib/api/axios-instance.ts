@@ -1,7 +1,8 @@
 import axios from "axios"
 import { jwtDecode } from "jwt-decode"
+import Cookies from "js-cookie"
 
-// Création d'une instance Axios avec la configuration de base
+
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
   headers: {
@@ -9,20 +10,18 @@ const axiosInstance = axios.create({
   },
 })
 
-// Intercepteur pour ajouter le token d'authentification aux requêtes
+
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const accessToken = localStorage.getItem("accessToken")
+    const accessToken = Cookies.get("accessToken")
 
     if (accessToken) {
-      // Vérifier si le token est expiré
       try {
         const decodedToken = jwtDecode(accessToken)
         const currentTime = Date.now() / 1000
 
         if (decodedToken.exp && decodedToken.exp < currentTime) {
-          // Token expiré, essayer de le rafraîchir
-          const refreshToken = localStorage.getItem("refreshToken")
+          const refreshToken = Cookies.get("refreshToken")
 
           if (refreshToken) {
             try {
@@ -32,22 +31,21 @@ axiosInstance.interceptors.request.use(
               )
 
               const newAccessToken = response.data.access
-              localStorage.setItem("accessToken", newAccessToken)
-              config.headers.Authorization = `JWT ${newAccessToken}`
+              Cookies.set("accessToken", newAccessToken, { expires: 7, path: "/" })
+              config.headers.Authorization = `Bearer ${newAccessToken}`
             } catch (error) {
               console.log(error)
-              localStorage.removeItem("accessToken")
-              localStorage.removeItem("refreshToken")
+              Cookies.remove("accessToken", { path: "/" })
+              Cookies.remove("refreshToken", { path: "/" })
               window.dispatchEvent(new Event("storage"))
             }
           }
         } else {
-          // Token valide
-          config.headers.Authorization = `JWT ${accessToken}`
+          config.headers.Authorization = `Bearer ${accessToken}`
         }
       } catch (error) {
         console.log(error)
-        config.headers.Authorization = `JWT ${accessToken}`
+        config.headers.Authorization = `Bearer ${accessToken}`
       }
     }
 
@@ -56,15 +54,15 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error),
 )
 
-// Intercepteur pour gérer les erreurs de réponse
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     // Gérer les erreurs spécifiques (401, 403, etc.)
     if (error.response?.status === 401) {
       // Token invalide ou expiré et impossible à rafraîchir
-      localStorage.removeItem("accessToken")
-      localStorage.removeItem("refreshToken")
+      Cookies.remove("accessToken", { path: "/" })
+      Cookies.remove("refreshToken", { path: "/" })
       // Déclencher un événement pour que le store Zustand puisse réagir
       window.dispatchEvent(new Event("storage"))
     }

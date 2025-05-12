@@ -3,7 +3,9 @@
 import type * as React from "react"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { GalleryVerticalEnd, Home, Settings, Users, FileText, HelpCircle, Calendar, Stethoscope } from "lucide-react"
+import { GalleryVerticalEnd, Home, Settings, Users, FileText, HelpCircle, Calendar, Stethoscope, LogOut } from "lucide-react"
+import { useAuthStore } from "@/lib/zustand/auth-store"
+import { useRouter } from "next/navigation"
 
 import {
   Sidebar,
@@ -26,24 +28,31 @@ const navigationItems = [
     url: "/praticien/dashboard",
   },
   {
+    title: "Disponibilités",
+    icon: Calendar,
+    url: "/praticien/disponibilites",
+  },
+  {
     title: "Consultations",
     icon: Stethoscope,
     url: "/praticien/consultations",
   },
   {
-    title: "Rapports Médicaux",
+    title: "Historiques",
     icon: FileText,
-    url: "/praticien/rapports",
-  },
-  {
-    title: "Disponibilités",
-    icon: Calendar,
-    url: "/praticien/disponibilites",
+    url: "/praticien/historiques",
   }
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
+  const logout = useAuthStore((state) => state.logout)
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await logout()
+    router.push("/praticien/login")
+  }
 
   return (
     <Sidebar {...props}>
@@ -78,6 +87,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <div className="mt-auto p-4">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 w-full px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition-colors"
+        >
+          <LogOut className="w-5 h-5" />
+          Déconnexion
+        </button>
+      </div>
       <SidebarRail />
     </Sidebar>
   )
