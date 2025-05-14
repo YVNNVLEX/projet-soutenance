@@ -1,55 +1,58 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { jwtDecode } from "jwt-decode"
+import {jwtDecode} from "jwt-decode"
 
-// Routes qui nécessitent une authentification
-const protectedRoutes = ["/patient", "/praticien/dashboard"]
+// Routes nécessitant une authentification
+const protectedRoutes = ["/patient", "/praticien/**"]
 
-// Routes accessibles uniquement aux utilisateurs non authentifiés
+// Routes accessibles uniquement aux non-authentifiés
 const authRoutes = ["/praticien/login", "/patient/login", "/patient/signup"]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Récupérer le token JWT depuis les cookies
+  // Lire le token JWT dans les cookies
   const accessToken = request.cookies.get("accessToken")?.value
 
   // Vérifier si l'utilisateur est authentifié
   const isAuthenticated = accessToken ? isTokenValid(accessToken) : false
 
-  // Vérifier si la route actuelle nécessite une authentification
-  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
-  const isAuthRoute = authRoutes.some((route) => pathname === route)
+  // Vérifier si la route est protégée
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
 
-  // Rediriger les utilisateurs non authentifiés vers la page de connexion appropriée
+  // Vérifier si la route est une route d'authentification (login/signup)
+  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route))
+
+  // Debug logs (à retirer en production)
+  console.log("Middleware path:", pathname)
+  console.log("Access Token:", accessToken)
+  console.log("Is Authenticated:", isAuthenticated)
+  console.log("Is Protected Route:", isProtectedRoute)
+  console.log("Is Auth Route:", isAuthRoute)
+
+  // Si route protégée et pas authentifié => rediriger vers login
   if (isProtectedRoute && !isAuthenticated) {
     const loginPath = pathname.startsWith("/praticien") ? "/praticien/login" : "/patient/login"
     const url = new URL(loginPath, request.url)
-    url.searchParams.set("callbackUrl", encodeURI(pathname))
+    url.searchParams.set("callbackUrl", encodeURIComponent(pathname))
     return NextResponse.redirect(url)
   }
 
-  // Rediriger les utilisateurs authentifiés vers le tableau de bord approprié
+  // Si route d'authentification et déjà authentifié => rediriger vers dashboard
   if (isAuthRoute && isAuthenticated) {
-    const dashboardPath = pathname.includes("praticien") ? "/praticien/dashboard" : "/patient/dashboard"
+    const dashboardPath = pathname.startsWith("/praticien") ? "/praticien/dashboard" : "/patient/dashboard"
     return NextResponse.redirect(new URL(dashboardPath, request.url))
   }
 
+  // Sinon laisser passer
   return NextResponse.next()
 }
 
-// Vérifier si le token JWT est valide
 function isTokenValid(token: string): boolean {
   try {
     const decodedToken = jwtDecode<{ exp: number }>(token)
     const currentTime = Date.now() / 1000
-
-    // Vérifier si le token n'est pas expiré
-    if (decodedToken.exp <= currentTime) {
-      return false
-    }
-
-    return true
+    return decodedToken.exp > currentTime
   } catch (error) {
     console.error("Erreur lors de la validation du token:", error)
     return false
