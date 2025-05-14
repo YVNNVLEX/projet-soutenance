@@ -2,6 +2,7 @@ from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from rest_framework import serializers
 from .models import CustomUser, Patient, Praticien, Hopital, Consultation, Ticket, Disponibilite, Paiement
 import uuid
+from .utils.user_utils import get_praticien_id_from_user
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     dateNaissance = serializers.DateField(required=False, format="%d/%m/%Y")
@@ -94,6 +95,14 @@ class DispoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Disponibilite
         fields = "__all__"
+
+    def to_internal_value(self, data):
+        praticien_id = data.get('praticien_id')
+        if praticien_id and isinstance(praticien_id, int):
+            vrai_id = get_praticien_id_from_user(praticien_id)
+            if vrai_id:
+                data['praticien_id'] = vrai_id
+        return super().to_internal_value(data)
         
         
 class HopitalSerializer(serializers.ModelSerializer):
