@@ -9,9 +9,20 @@ from .serializer import DispoSerializer, HopitalSerializer, ConsulSerializer, Pa
 
 from .utils.pdf_generator import generate_pdf_base
 from datetime import date
-import base64
 from django.core.files.base import ContentFile
+from .utils.user_utils import get_praticien_id_from_user
 
+def get_praticien_id_from_user(user_id):
+    try:
+        return Praticien.objects.get(user_id=user_id).praticien_id
+    except Praticien.DoesNotExist:
+        return None
+
+def get_patient_id_from_user(user_id):
+    try:
+        return Patient.objects.get(user_id=user_id).patient_id
+    except Patient.DoesNotExist:
+        return None
 
 @api_view(['POST'])
 def DispoView(request):
@@ -30,7 +41,15 @@ def DispoView(request):
 
 @api_view(['GET'])
 def GetDispoView(request):
-    disponibilites = Disponibilite.objects.all()
+    user_id = request.query_params.get('praticien_id')
+    if user_id:
+        praticien_id = get_praticien_id_from_user(user_id)
+        if praticien_id:
+            disponibilites = Disponibilite.objects.filter(praticien_id=praticien_id)
+        else:
+            disponibilites = Disponibilite.objects.none()
+    else:
+        disponibilites = Disponibilite.objects.all()
     serializer = DispoSerializer(disponibilites, many=True)
     return Response(serializer.data)
 
