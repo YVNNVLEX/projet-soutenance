@@ -1,21 +1,15 @@
 "use client"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {  
-Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-} from "@/components/ui/breadcrumb"
 import Link from "next/link"
-import { Separator } from "@/components/ui/separator"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-// import { useAuthStore } from "@/lib/zustand/auth-store"
+import { useAuthStore } from "@/lib/zustand/auth-store"
 import { ArrowRightIcon, ArrowRightIconHandle } from "@/components/ui/arrow-right"
 import { useEffect, useRef, useState } from "react"
 import axios from "axios"
 
 export default function Page() {
+  const user = useAuthStore((state) => state.user);
+
   const ArrowRef = useRef<ArrowRightIconHandle>(null)
   const [consultations, setConsultations] = useState<any[]>([])
 
@@ -28,7 +22,7 @@ export default function Page() {
   return (
     <>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        Bonjour Monsieur
+        <p>Bonjour Dr <span className="font-semibold">{user?.nom} {user?.prenom} </span></p>
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
           <div className="aspect-video rounded-xl bg-muted/50 flex flex-col justify-between p-4">
             <div className="flex items-center justify-between">

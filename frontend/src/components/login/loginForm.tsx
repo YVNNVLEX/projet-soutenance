@@ -120,13 +120,13 @@ export default function LoginForm() {
                         <button
                           type="button"
                           tabIndex={-1}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
                           onClick={() => setShowPassword((v) => !v)}
                         >
                           {showPassword ? (
-                            <EyeOff className="w-5 h-5 animate-pulse" />
+                            <EyeOff className="w-5 h-5" />
                           ) : (
-                            <Eye className="w-5 h-5 animate-pulse" />
+                            <Eye className="w-5 h-5" />
                           )}
                         </button>
                       </div>

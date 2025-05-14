@@ -1,64 +1,88 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CalendarIcon, PlusIcon, TrashIcon } from "lucide-react";
+import {  PlusIcon, TrashIcon } from "lucide-react";
+import { useAuthStore } from "@/lib/zustand/auth-store";
+import axios from "axios";
+import Toast from "@/components/ui/Toast";
 
 interface FormValues {
   date: Date | null;
-  repeat: string;
-  duration: string;
-  teleconsult: boolean;
   slots: { start: string; end: string }[];
 }
 
+interface Disponibilite {
+  disponibilite_id: number;
+  date_disponibilite: string;
+  heure_debut: string;
+  heure_fin: string;
+  praticien_id: number;
+}
+
 export default function DisponibilitePage() {
+  const user = useAuthStore((state) => state.user);
   const [calendarDate, setCalendarDate] = useState<Date | undefined>(new Date());
+  const [mesDisponibilites, setMesDisponibilites] = useState<Disponibilite[]>([]);
   const today = new Date();
-  today.setHours(0, 0, 0, 0); 
+  today.setHours(0, 0, 0, 0);
+  const [showToast, setShowToast] = useState(false);
 
   const form = useForm<FormValues>({
     defaultValues: {
       date: new Date(),
-      repeat: "none",
-      duration: "30",
       slots: [{ start: "09:00", end: "12:00" }],
     },
   });
-  const { control, handleSubmit, setValue, watch } = form;
+  const { control, handleSubmit, setValue } = form;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "slots",
   });
 
-  // Synchroniser la date du calendrier avec le champ du formulaire
   const handleCalendarSelect = (date: Date | undefined) => {
     setCalendarDate(date);
     setValue("date", date ?? null);
   };
 
+  useEffect(() => {
+    if (!user?.id) return;
+    axios.get(`http://localhost:8000/disponibilites/list?praticien_id=${user.id}`)
+      .then((res) => setMesDisponibilites(res.data))
+      .catch(() => setMesDisponibilites([]));
+  }, [user?.id]);
+
   const onSubmit = (data: FormValues) => {
-    // Ici, tu peux envoyer les données à l'API
-    console.log(data);
+    if (!user?.id || !data.date) return;
+    const dateStr = data.date.toISOString().split("T")[0];
+    const promises = data.slots.map(slot =>
+      axios.post("http://localhost:8000/disponibilite/create/", {
+        date_disponibilite: dateStr,
+        heure_debut: slot.start,
+        heure_fin: slot.end,
+        praticien_id: user.id,
+      })
+    );
+    Promise.all(promises).then(() => {
+      axios.get(`http://localhost:8000/disponibilite/list?praticien_id=${user.id}`)
+        .then((res) => setMesDisponibilites(res.data));
+      setShowToast(true);
+    });
   };
 
   return (
     <div className="p-6">
+      <Toast show={showToast} message="Disponibilité ajoutée avec succès !" onClose={() => setShowToast(false)} type="success" />
       <h1 className="text-3xl font-bold mb-1">Gestion des disponibilités</h1>
-      <p className="text-muted-foreground mb-6">Définissez vos plages horaires de disponibilité pour les consultations</p>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Calendrier */}
           <div className="bg-white rounded-xl border p-6 flex flex-col gap-2">
             <h2 className="text-xl font-semibold mb-1">Calendrier</h2>
-            <p className="text-muted-foreground mb-4 text-sm">Sélectionnez les dates pour ajouter des disponibilités</p>
             <Controller
               control={control}
               name="date"
@@ -77,60 +101,6 @@ export default function DisponibilitePage() {
           {/* Plages horaires */}
           <div className="bg-white rounded-xl border p-6 flex flex-col gap-4">
             <h2 className="text-xl font-semibold mb-1">Plages horaires</h2>
-            <p className="text-muted-foreground mb-4 text-sm">Définissez vos heures de disponibilité pour les dates sélectionnées</p>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <label className="block text-xs mb-1 font-medium">Date disponibilité</label>
-                <div className="relative">
-                  <Input
-                    type="text"
-                    value={calendarDate ? format(calendarDate, "d MMMM yyyy", { locale: fr }) : ""}
-                    readOnly
-                    className="pr-10"
-                  />
-                  <CalendarIcon className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                </div>
-              </div>
-              <div className="flex-1">
-                <label className="block text-xs mb-1 font-medium">Type de répétition</label>
-                <Controller
-                  control={control}
-                  name="repeat"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Pas de répétition" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">Pas de répétition</SelectItem>
-                        <SelectItem value="daily">Tous les jours</SelectItem>
-                        <SelectItem value="weekly">Toutes les semaines</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-xs mb-1 font-medium">Durée (minutes)</label>
-                <Controller
-                  control={control}
-                  name="duration"
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="30 minutes" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="15">15 minutes</SelectItem>
-                        <SelectItem value="30">30 minutes</SelectItem>
-                        <SelectItem value="45">45 minutes</SelectItem>
-                        <SelectItem value="60">60 minutes</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div>
-            </div>
             <div>
               <label className="block text-xs mb-1 font-medium">Plages horaires</label>
               <div className="flex flex-col gap-2">
@@ -164,12 +134,39 @@ export default function DisponibilitePage() {
               </div>
             </div>
             <Button className="mt-4 w-full text-base font-medium bg-[#00aed6] hover:bg-[#00aed6]/80 cursor-pointer text-white" size="lg" type="submit">
-              <span className="mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M5 12.75a.75.75 0 0 1 .75-.75h5.5V6.75a.75.75 0 0 1 1.5 0v5.25h5.5a.75.75 0 0 1 0 1.5h-5.5v5.25a.75.75 0 0 1-1.5 0V13.5h-5.5A.75.75 0 0 1 5 12.75Z"/></svg></span>
               Enregistrer les disponibilités
             </Button>
           </div>
         </div>
       </form>
+      {/* Section Mes disponibilités */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-semibold mb-2">Mes disponibilités</h2>
+        {mesDisponibilites.length === 0 ? (
+          <p className="text-muted-foreground">Aucune disponibilité enregistrée.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border rounded-lg">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 border-b">Date</th>
+                  <th className="px-4 py-2 border-b">Heure début</th>
+                  <th className="px-4 py-2 border-b">Heure fin</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mesDisponibilites.map((d) => (
+                  <tr key={d.disponibilite_id}>
+                    <td className="px-4 py-2 border-b">{d.date_disponibilite}</td>
+                    <td className="px-4 py-2 border-b">{d.heure_debut}</td>
+                    <td className="px-4 py-2 border-b">{d.heure_fin}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
