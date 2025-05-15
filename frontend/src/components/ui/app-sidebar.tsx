@@ -36,11 +36,6 @@ const navigationItems = [
     title: "Consultations",
     icon: Stethoscope,
     url: "/praticien/consultations",
-  },
-  {
-    title: "Historiques",
-    icon: FileText,
-    url: "/praticien/historiques",
   }
 ]
 
