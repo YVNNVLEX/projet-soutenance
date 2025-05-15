@@ -25,7 +25,7 @@ def get_patient_id_from_user(user_id):
         return None
 
 @api_view(['POST'])
-def DispoView(request):
+def DispoView(request, id=None): 
     serializer = DispoSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -38,12 +38,28 @@ def DispoView(request):
             "errors": serializer.errors,
             "status": status.HTTP_400_BAD_REQUEST
         })
+        
+        
+@api_view(['DELETE'])
+def DispoDeleteView(request, id=None):
+    disponibilite = Disponibilite.objects.get(disponibilite_id=id)
+    print(disponibilite)
+    # disponibilite.delete()
+    return Response({
+        "message": "Disponibilité supprimée avec succès",
+        "status": status.HTTP_204_NO_CONTENT
+    })
+    
 
 @api_view(['GET'])
 def GetDispoView(request):
     user_id = request.query_params.get('praticien_id')
     if user_id:
-        praticien_id = get_praticien_id_from_user(user_id)
+        try:
+            user_id_int = int(user_id)
+        except ValueError:
+            user_id_int = None
+        praticien_id = get_praticien_id_from_user(user_id_int) if user_id_int is not None else None
         if praticien_id:
             disponibilites = Disponibilite.objects.filter(praticien_id=praticien_id)
         else:
