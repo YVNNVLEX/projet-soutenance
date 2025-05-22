@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from datetime import date
 
-from .models import Disponibilite, Hopital, Paiement, Patient, Praticien, Ticket, Notification
+from .models import Disponibilite, Hopital, Patient, Praticien, Ticket, Notification, Consultation
 from .serializer import DispoSerializer, HopitalSerializer, ConsulSerializer, PatientSerializer, PraticienSerializer
 
 from .utils.pdf_generator import generate_pdf_base
@@ -134,33 +134,20 @@ def ConsultView(request):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
-# @api_view(['POST'])
-# def TicketGenerateView(request):
-#     praticien_info = {
-#         "nom": "Dr N'Guessan",
-#         "adresse": "123 Rue Santé, 75000 Paris"
-#     }
-
-#     patient_info = {
-#         "nom": "Pascal",
-#         "date": datetime.today().strftime('%d/%m/%Y')
-#     }
-
-#     prestation_info = {
-#         "description": "Entrée au congrès médical",
-#         "montant": "20.00 €"
-#     }
-
-#     qr_data = f"Ticket - {patient_info['nom']} - {prestation_info['description']}"
-
-#     pdf_buffer = generate_pdf_base(
-#         title="Ticket d'entrée",
-#         praticien_info=praticien_info,
-#         patient_info=patient_info,
-#         prestation_info=prestation_info,
-#         qr_data=qr_data
-#     )
-
-#     return FileResponse(pdf_buffer, as_attachment=True, filename="ticket.pdf")
+@api_view(['GET'])
+def GetConsultView(request):
+    user_id = request.query_params.get('praticien_id')
+    if user_id:
+        try:
+            user_id_int = int(user_id)
+        except ValueError:
+            user_id_int = None
+        praticien_id = get_praticien_id_from_user(user_id_int) if user_id_int is not None else None
+        if praticien_id:
+            consultations = Consultation.objects.filter(praticien_id=praticien_id)
+        else:
+            consultations = Consultation.objects.none()
+    else:
+        consultations = Consultation.objects.all()
+    serializer = ConsulSerializer(consultations, many=True)
+    return Response(serializer.data)

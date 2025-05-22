@@ -114,7 +114,12 @@ class HopitalSerializer(serializers.ModelSerializer):
 class ConsulSerializer(serializers.ModelSerializer):
     date = serializers.DateField(
         input_formats=['%d-%m-%Y', '%d/%m/%Y', '%Y-%m-%d'],
-        required=True
+        required=False,
+        read_only=True
+    )
+    heure = serializers.TimeField(
+        required=False,
+        read_only=True
     )
     patient = PatientSerializer(read_only=True) 
     patient_id = serializers.PrimaryKeyRelatedField(
@@ -127,3 +132,11 @@ class ConsulSerializer(serializers.ModelSerializer):
     class Meta:
         model = Consultation
         fields = "__all__"
+
+    def create(self, validated_data):
+        disponibilite = validated_data.get('disponibilite')
+        if disponibilite:
+            validated_data['date'] = disponibilite.date
+            validated_data['heure'] = disponibilite.heure
+            validated_data['praticien'] = disponibilite.praticien
+        return super().create(validated_data)
