@@ -107,10 +107,20 @@ class Disponibilite(models.Model):
 
 
 class Consultation(models.Model):
+    CONSULTATION_STATUS_CHOICES = (
+        ('annulée', 'Annulée'),
+        ('en_attente', 'En attente'),
+        ('en_cours', 'En cours'),
+        ('terminée', 'Terminée'),
+    )
+    
     consultation_id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     date = models.DateField()
     heure = models.TimeField()
+    motif = models.TextField(default='Non spécifié')
+    praticien = models.ForeignKey(Praticien, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=CONSULTATION_STATUS_CHOICES, default='en_attente')
     disponibilite = models.ForeignKey(Disponibilite, on_delete=models.CASCADE)
     
     
