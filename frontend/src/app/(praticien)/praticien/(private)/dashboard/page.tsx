@@ -6,16 +6,65 @@ import { useAuthStore } from "@/lib/zustand/auth-store"
 import { ArrowRightIcon, ArrowRightIconHandle } from "@/components/ui/arrow-right"
 import { useEffect, useRef, useState } from "react"
 import axios from "axios"
+import { Eye, FileText, Clock, CheckCircle, XCircle } from "lucide-react"
+
+interface Consultation {
+  patient: string;
+  date: string;
+  heure: string;
+  motif: string;
+  status: 'en attente' | 'terminé' | 'en cours' | 'annulé';
+}
+
+const consultationsFictives: Consultation[] = [
+  {
+    patient: "Kouadio Yao",
+    date: "2025-03-15",
+    heure: "09:00",
+    motif: "Détartrage",
+    status: "en attente"
+  },
+  {
+    patient: "Traoré Awa",
+    date: "2025-03-15",
+    heure: "10:00",
+    motif: "Extraction de dent",
+    status: "en attente"
+  },
+  {
+    patient: "Koffi N'Guessan",
+    date: "2025-03-15",
+    heure: "11:00",
+    motif: "Consultation carie",
+    status: "en attente"
+  },
+  {
+    patient: "Bamba Mariam",
+    date: "2025-03-15",
+    heure: "14:00",
+    motif: "Appareil dentaire",
+    status: "en attente"
+  },
+  {
+    patient: "Ouattara Issa",
+    date: "2025-03-15",
+    heure: "15:00",
+    motif: "Blanchiment dentaire",
+    status: "en attente"
+  }
+]
 
 export default function Page() {
   const user = useAuthStore((state) => state.user);
 
   const ArrowRef = useRef<ArrowRightIconHandle>(null)
-  const [consultations, setConsultations] = useState<any[]>([])
+  const [consultations, setConsultations] = useState<Consultation[]>(consultationsFictives)
 
   useEffect(() => {
     axios.get("/api/consultations").then((res) => {
-      setConsultations(res.data)
+      if (res.data && res.data.length > 0) {
+        setConsultations(res.data)
+      }
     })
   }, [])
 
@@ -34,8 +83,6 @@ export default function Page() {
             <div className="text-5xl font-light mt-2">4</div>
             <div className="text-base text-muted-foreground mt-2">Prochain rendez-vous 8h30</div>
           </div>
-          {/* <div className="aspect-video rounded-xl bg-muted/50" />
-          <div className="aspect-video rounded-xl bg-muted/50" /> */}
         </div>
         <div className="min-h-[50vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-6">
           <h2 className="text-xl font-semibold mb-4">Nombre du jour</h2>
@@ -48,84 +95,52 @@ export default function Page() {
                   <th className="text-left py-3 px-4">Heure</th>
                   <th className="text-left py-3 px-4">Motif</th>
                   <th className="text-left py-3 px-4">Statut</th>
+                  <th className="text-left py-3 px-4">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b hover:bg-muted/30">
-                  <td className="py-3 px-4 flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Kouadio" />
-                      <AvatarFallback>KD</AvatarFallback>
-                    </Avatar>
-                    Kouadio Amani
-                  </td>
-                  <td className="py-3 px-4">15/03/2025</td>
-                  <td className="py-3 px-4">09:00</td>
-                  <td className="py-3 px-4">Consultation de routine</td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">Confirmé</span>
-                  </td>
-                </tr>
-                <tr className="border-b hover:bg-muted/30">
-                  <td className="py-3 px-4 flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Adjoa" />
-                      <AvatarFallback>AD</AvatarFallback>
-                    </Avatar>
-                    Adjoa Konan
-                  </td>
-                  <td className="py-3 px-4">15/03/2025</td>
-                  <td className="py-3 px-4">10:30</td>
-                  <td className="py-3 px-4">Suivi traitement</td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">En attente</span>
-                  </td>
-                </tr>
-                <tr className="border-b hover:bg-muted/30">
-                  <td className="py-3 px-4 flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Yao" />
-                      <AvatarFallback>YA</AvatarFallback>
-                    </Avatar>
-                    Yao Kouassi
-                  </td>
-                  <td className="py-3 px-4">15/03/2025</td>
-                  <td className="py-3 px-4">14:00</td>
-                  <td className="py-3 px-4">Première consultation</td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">En cours</span>
-                  </td>
-                </tr>
-                <tr className="border-b hover:bg-muted/30">
-                  <td className="py-3 px-4 flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aminata" />
-                      <AvatarFallback>AM</AvatarFallback>
-                    </Avatar>
-                    Aminata Traoré
-                  </td>
-                  <td className="py-3 px-4">15/03/2025</td>
-                  <td className="py-3 px-4">15:30</td>
-                  <td className="py-3 px-4">Contrôle post-opératoire</td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">Annulé</span>
-                  </td>
-                </tr>
-                <tr className="border-b hover:bg-muted/30">
-                  <td className="py-3 px-4 flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mamadou" />
-                      <AvatarFallback>MM</AvatarFallback>
-                    </Avatar>
-                    Mamadou Ouattara
-                  </td>
-                  <td className="py-3 px-4">15/03/2025</td>
-                  <td className="py-3 px-4">16:00</td>
-                  <td className="py-3 px-4">Consultation urgente</td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">Confirmé</span>
-                  </td>
-                </tr>
+                {consultations.map((consultation, index) => (
+                  <tr key={index} className="border-b hover:bg-muted/30">
+                    <td className="py-3 px-4 flex items-center gap-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${consultation.patient.split(' ')[0]}`} />
+                        <AvatarFallback>{consultation.patient.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      </Avatar>
+                      {consultation.patient}
+                    </td>
+                    <td className="py-3 px-4">{consultation.date}</td>
+                    <td className="py-3 px-4">{consultation.heure}</td>
+                    <td className="py-3 px-4">{consultation.motif}</td>
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit ${
+                        consultation.status === 'terminé' ? 'bg-green-100 text-green-800' : 
+                        consultation.status === 'en attente' ? 'bg-yellow-100 text-yellow-800' : 
+                        consultation.status === 'en cours' ? 'bg-blue-100 text-blue-800' : 
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {consultation.status === 'terminé' ? <CheckCircle size={14} /> :
+                         consultation.status === 'en attente' ? <Clock size={14} /> :
+                         consultation.status === 'en cours' ? <Clock size={14} /> :
+                         <XCircle size={14} />}
+                        {consultation.status.charAt(0).toUpperCase() + consultation.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex gap-2">
+                        <button className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors cursor-pointer">
+                          <Eye size={14} />
+                          Détail patient
+                        </button>
+                        {consultation.status === 'terminé' && (
+                          <button className="flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors cursor-pointer">
+                            <FileText size={14} />
+                            Voir rapport
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

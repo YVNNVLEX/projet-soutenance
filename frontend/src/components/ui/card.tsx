@@ -23,7 +23,7 @@ const CardPraticien: React.FC<CardPraticienProps> = ({
   photo,
   creneaux,
   calendrier = false,
-  jours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi"],
+  jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
   dates = ["24 avr.", "25 avr.", "26 avr.", "27 avr.", "28 avr.", "29 avr.", "30 avr.", "1 mai", "2 mai", "3 mai", "4 mai", "5 mai"],
 }) => {
   // On affiche 2 lignes de 12 créneaux si calendrier, sinon une colonne
