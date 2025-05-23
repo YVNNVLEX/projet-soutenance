@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import CustomUser, Patient, Praticien, Hopital, Consultation, Ticket, Disponibilite, Paiement
 import uuid
 from .utils.user_utils import get_praticien_id_from_user
+from datetime import datetime
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     dateNaissance = serializers.DateField(required=False, format="%d/%m/%Y")
@@ -134,9 +135,16 @@ class ConsulSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data):
-        disponibilite = validated_data.get('disponibilite')
-        if disponibilite:
-            validated_data['date'] = disponibilite.date
-            validated_data['heure'] = disponibilite.heure
-            validated_data['praticien'] = disponibilite.praticien
+        date = datetime.now().date()
+        heure = datetime.now().time()
+        validated_data['date'] = date
+        validated_data['heure'] = heure
         return super().create(validated_data)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.date:
+            representation['date'] = instance.date.strftime("%d-%m-%Y")
+        if instance.heure:
+            representation['heure'] = instance.heure.strftime("%H:%M")
+        return representation
