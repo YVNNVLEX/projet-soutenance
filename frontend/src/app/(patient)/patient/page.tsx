@@ -8,6 +8,31 @@ import { Search } from 'lucide-react';
 import React, { useState } from 'react';
 import CardPraticien from '@/components/ui/card';
 
+const getWeekDays = () => {
+  const today = new Date();
+  const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+  const months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  
+
+  const currentDay = today.getDay();
+  const daysUntilMonday = currentDay === 0 ? 1 : currentDay === 6 ? 2 : 0;
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() + daysUntilMonday);
+  
+  const weekDays = [];
+  const weekDates = [];
+  
+
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
+    weekDays.push(days[date.getDay()]);
+    weekDates.push(`${date.getDate()} ${months[date.getMonth()]}`);
+  }
+  
+  return { weekDays, weekDates };
+};
+
 const doctorsBySpecialty: Record<string, Array<{
   nom: string;
   specialite: string;
@@ -26,12 +51,23 @@ const doctorsBySpecialty: Record<string, Array<{
       centre: "Centre Médical Sainte Rita",
       photo: "https://randomuser.me/api/portraits/women/44.jpg",
       creneaux: [
+        { heure: "07:00", disponible: true },
+        { heure: "07:30", disponible: true },
+        { heure: "08:00", disponible: false },
+        { heure: "08:30", disponible: true },
+        { heure: "09:00", disponible: true },
+        { heure: "09:30", disponible: false },
+        { heure: "10:00", disponible: true },
+        { heure: "10:30", disponible: true },
+        { heure: "11:00", disponible: false },
+        { heure: "11:30", disponible: true },
+        { heure: "12:00", disponible: false },
+        { heure: "12:30", disponible: false },
+        { heure: "13:00", disponible: true },
+        { heure: "13:30", disponible: true },
+        { heure: "14:00", disponible: false },
         { heure: "14:30", disponible: true },
-        { heure: "16:00", disponible: true },
-        { heure: "17:00", disponible: true },
-        { heure: "-", disponible: false },
         { heure: "15:00", disponible: true },
-        { heure: "18:00", disponible: true },
       ],
     },
   ],
@@ -44,10 +80,20 @@ const doctorsBySpecialty: Record<string, Array<{
       centre: "Polyclinique Les Anges",
       photo: "https://randomuser.me/api/portraits/women/65.jpg",
       creneaux: [
-        { heure: "09:00", disponible: true },
-        { heure: "10:30", disponible: true },
-        { heure: "-", disponible: false },
+        { heure: "08:00", disponible: true },
+        { heure: "08:30", disponible: true },
+        { heure: "09:00", disponible: false },
+        { heure: "09:30", disponible: true },
+        { heure: "10:00", disponible: true },
+        { heure: "10:30", disponible: false },
+        { heure: "11:00", disponible: true },
+        { heure: "11:30", disponible: true },
+        { heure: "12:00", disponible: false },
+        { heure: "12:30", disponible: false },
         { heure: "13:00", disponible: true },
+        { heure: "13:30", disponible: true },
+        { heure: "14:00", disponible: false },
+        { heure: "14:30", disponible: true },
       ],
     },
   ],
@@ -127,6 +173,8 @@ const doctorsBySpecialty: Record<string, Array<{
 
 const Page = () => {
   const [selectedTab, setSelectedTab] = useState<string>("generaliste");
+  const [searchQuery, setSearchQuery] = useState("");
+  const { weekDays, weekDates } = getWeekDays();
 
   return (
     <>
@@ -214,9 +262,9 @@ const Page = () => {
                 centre={doctor.centre}
                 photo={doctor.photo}
                 creneaux={doctor.creneaux}
-                calendrier={selectedTab === "generaliste"}
-                jours={selectedTab === "generaliste" ? ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi"] : undefined}
-                dates={selectedTab === "generaliste" ? ["24 avr.", "25 avr.", "26 avr.", "27 avr.", "28 avr.", "29 avr.", "30 avr.", "1 mai", "2 mai", "3 mai", "4 mai", "5 mai"] : undefined}
+                calendrier={true}
+                jours={weekDays}
+                dates={weekDates}
               />
             ))}
           </div>
