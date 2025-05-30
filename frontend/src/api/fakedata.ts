@@ -1,4 +1,5 @@
 import { Praticien } from "@/types/praticien";
+import { Consultation } from "@/types/consultation";
 
 export const DoctorsBySpecialty: Record<string,Praticien[]> = {
     generaliste: [
@@ -129,3 +130,41 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
       },
     ],
   };
+
+export  const ConsultationsFictives: Consultation[] = [
+    {
+      patient: "Kouadio Yao",
+      date: "2025-03-15",
+      heure: "09:00",
+      motif: "Détartrage",
+      status: "en attente"
+    },
+    {
+      patient: "Traoré Awa",
+      date: "2025-03-15",
+      heure: "10:00",
+      motif: "Extraction de dent",
+      status: "en attente"
+    },
+    {
+      patient: "Koffi N'Guessan",
+      date: "2025-03-15",
+      heure: "11:00",
+      motif: "Consultation carie",
+      status: "en attente"
+    },
+    {
+      patient: "Bamba Mariam",
+      date: "2025-03-15",
+      heure: "14:00",
+      motif: "Appareil dentaire",
+      status: "en attente"
+    },
+    {
+      patient: "Ouattara Issa",
+      date: "2025-03-15",
+      heure: "15:00",
+      motif: "Blanchiment dentaire",
+      status: "en attente"
+    }
+  ]
