@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import React, { useEffect, useState } from "react"
+// import { useParams } from "next/navigation"
 import axios from "axios"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FileText } from "lucide-react"
 
@@ -25,7 +26,7 @@ interface Consultation {
   status: "terminé" | "en_attente" | "en_cours" | "annulé"
 }
 
-// Données fictives pour le développement
+
 const mockConsultation: Consultation = {
   id: 1,
   patient: {
@@ -43,8 +44,10 @@ const mockConsultation: Consultation = {
   status: "en_attente"
 }
 
-export default function ConsultationDetail() {
-  const params = useParams()
+export default function ConsultationDetail({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = React.use(params)
+  const id = resolvedParams.id
+
   const [consultation, setConsultation] = useState<Consultation | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -53,17 +56,11 @@ export default function ConsultationDetail() {
     const fetchConsultation = async () => {
       try {
         setIsLoading(true)
-        // En développement, utiliser les données fictives
-        if (process.env.NODE_ENV === 'development') {
-          setConsultation(mockConsultation)
-        } else {
-          const response = await axios.get(`http://localhost:8000/consultation/${params.id}/`)
-          setConsultation(response.data)
-        }
+        const response = await axios.get(`http://localhost:8000/consultation/${id}/`)
+        setConsultation(response.data)
         setError(null)
       } catch (err) {
         console.error("Erreur:", err)
-        // En cas d'erreur, utiliser les données fictives
         setConsultation(mockConsultation)
         setError(null)
       } finally {
@@ -72,7 +69,8 @@ export default function ConsultationDetail() {
     }
 
     fetchConsultation()
-  }, [params.id])
+  }, [id])
+  
 
   if (isLoading) {
     return <div className="p-4 text-center">Chargement des détails...</div>
@@ -85,9 +83,18 @@ export default function ConsultationDetail() {
   return (
     <div className="p-6 space-y-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-6">Détails de la consultation</h1>
+        <div className="flex items-center gap-2">
+          <button 
+            className="flex items-center gap-1 px-4 py-2 text-sm bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors cursor-pointer"
+            onClick={() => window.history.back()}
+          >
+            <ArrowLeft size={16} />
+            Retour
+          </button>
+          <h1 className="text-2xl font-semibold">Détails de la consultation</h1>
+        </div>
         
-        <div className="bg-white rounded-lg shadow p-6 space-y-6">
+        <div className="p-6 space-y-6">
           {/* Informations du patient */}
           <div className="flex items-start gap-4">
             <Avatar className="h-16 w-16">

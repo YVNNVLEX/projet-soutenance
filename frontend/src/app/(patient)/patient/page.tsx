@@ -14,6 +14,7 @@ import React, { useState } from 'react';
 import { getWeekDays } from '@/lib/utils';
 import CardPraticien from '@/components/ui/card';
 import { DoctorsBySpecialty } from '@/api/fakedata';
+import { Specialite } from '@/types/specialite';
 
 
 const Page = () => {
@@ -122,15 +123,7 @@ const Page = () => {
         <section className="w-full mt-8">
           {/* Onglets spécialités */}
           <div className="flex items-center border-b border-gray-200 overflow-x-auto scrollbar-hide">
-            {[
-              { label: "Généraliste", value: "generaliste" },
-              { label: "Pédiatre", value: "pediatre" },
-              { label: "Dentiste", value: "dentiste" },
-              { label: "Cardiologue", value: "cardiologue" },
-              { label: "Ophtalmologue", value: "ophtalmologue" },
-              { label: "Pneumologue", value: "pneumologue" },
-              { label: "Nutritionniste", value: "nutritionniste" },
-            ].map((tab, idx) => (
+            {Specialite.map((tab, idx) => (
               <button
                 key={tab.value}
                 onClick={() => setSelectedTab(tab.value)}

@@ -16,7 +16,7 @@ import { useAuthStore } from "@/lib/zustand/auth-store"
 import { DetailPatientButton } from "@/components/consultation/DetailPatientButton"
 
 interface Consultation {
-  id: number
+  consultation_id: number
   patient: {
     id: number
     nom: string
@@ -171,7 +171,7 @@ export default function Page() {
                 </thead>
                 <tbody>
                   {currentConsultations.map((consultation) => (
-                    <tr key={consultation.id} className="border-b hover:bg-muted/30">
+                    <tr key={consultation.consultation_id} className="border-b hover:bg-muted/30">
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
@@ -210,7 +210,7 @@ export default function Page() {
                               Voir rapport
                             </button>
                           ) : (
-                            <DetailPatientButton consultationId={consultation.id} />
+                            <DetailPatientButton consultationId={consultation.consultation_id} />
                           )}
                         </div>
                       </td>
