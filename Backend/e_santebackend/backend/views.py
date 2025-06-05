@@ -151,3 +151,10 @@ def GetConsultView(request):
         consultations = Consultation.objects.all()
     serializer = ConsulSerializer(consultations, many=True)
     return Response(serializer.data)
+
+
+# @api_view(['GET'])
+# def GetConsultView(request, id):
+#     consultation = Consultation.objects.get(consultation_id=id)
+#     serializer = ConsulSerializer(consultation)
+#     return Response(serializer.data)
