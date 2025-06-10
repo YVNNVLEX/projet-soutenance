@@ -15,6 +15,7 @@ import { getWeekDays } from '@/lib/utils';
 import CardPraticien from '@/components/ui/card';
 import { DoctorsBySpecialty } from '@/api/fakedata';
 import { Specialite } from '@/types/specialite';
+import Image from 'next/image';
 
 
 const Page = () => {
@@ -118,7 +119,18 @@ const Page = () => {
         </section>
         <section className="w-full p-5">
           <p className="text-lg font-semibold">Mes dernières consultations</p>
-          
+          <div className="flex flex-col items-center justify-center py-12 px-4 text-center bg-gray-50 rounded-lg mt-6">
+            <Image
+              src="/img/no-history.png"
+              alt="Aucun historique de consultation"
+              width={200}
+              height={200}
+              className="mb-4"
+            />
+            <p className="mt-4 text-xl font-semibold text-gray-700">Vous n&#39;avez aucun historique pour le moment.</p>
+            <p className="mt-2 text-gray-500 max-w-md">Lorsque vous aurez des consultations enregistrées, elles apparaîtront ici. Commencez par prendre un rendez-vous !</p>
+          </div>
+
         </section>
         <section className="w-full mt-8">
           {/* Onglets spécialités */}
