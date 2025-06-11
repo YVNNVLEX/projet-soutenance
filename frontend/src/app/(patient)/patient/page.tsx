@@ -16,6 +16,7 @@ import CardPraticien from '@/components/ui/card';
 import { DoctorsBySpecialty } from '@/api/fakedata';
 import { Specialite } from '@/types/specialite';
 import Image from 'next/image';
+import { useRouter } from "next/navigation";
 
 
 const Page = () => {
@@ -24,10 +25,16 @@ const Page = () => {
   const [localite, setLocalite] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
   const { weekDays, weekDates } = getWeekDays();
+  const router = useRouter();
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(specialite, localite, date);
+    const queryParams = new URLSearchParams();
+    if (specialite) queryParams.append("specialite", specialite);
+    if (localite) queryParams.append("localite", localite);
+    if (date) queryParams.append("date", format(date, "yyyy-MM-dd"));
+
+    router.push(`/patient/search-results?${queryParams.toString()}`);
   };
 
   return (

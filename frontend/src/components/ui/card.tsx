@@ -29,7 +29,7 @@ const CardPraticien: React.FC<CardPraticienProps> = ({
   return (
     <div className="flex flex-col md:flex-row items-center bg-gray-100 rounded-xl p-4 md:p-6 shadow-sm">
       {/* Photo */}
-      <img src={photo} alt={nom} 
+      <img src={`/${photo}`} alt={nom} 
         className="w-28 h-28 rounded-lg object-cover mr-0 md:mr-6 mb-4 md:mb-0" 
       />
       {/* Infos */}
@@ -38,10 +38,10 @@ const CardPraticien: React.FC<CardPraticienProps> = ({
         <span className="text-gray-600 text-sm mb-2">{specialite}</span>
         <span className="text-gray-500 text-xs mb-1">{ville}, {quartier}</span>
         <span className="text-gray-500 text-xs mb-3">{centre}</span>
-        <button className="bg-[#00aed6] text-white px-4 py-2 rounded-md text-xs font-medium hover:bg-[#0095b6] transition cursor-pointer mb-2">Prendre rendez-vous</button>
+        <button className="bg-[#00aed6] text-white px-4 py-2 rounded-md text-xs font-medium hover:bg-[#0095b6] transition cursor-pointer mb-2">Réserver une consultation</button>
       </div>
       {/* Planning */}
-      <div className={calendrier ? "flex flex-col items-center bg-white rounded-lg p-2 md:ml-8 border border-gray-200 w-fit" : "flex flex-col items-center bg-white rounded-lg p-2 md:ml-8 border border-gray-200 min-w-[100px]"}>
+      <div className={calendrier ? "flex flex-col items-center bg-white rounded-lg p-2 md:ml-8 border border-gray-200 w-fit overflow-x-auto" : "flex flex-col items-center bg-white rounded-lg p-2 md:ml-8 border border-gray-200 min-w-[100px] overflow-x-auto"}>
         {calendrier ? (
           <>
             <div className="flex gap-2 mb-1">

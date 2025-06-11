@@ -5,5 +5,5 @@ export interface Praticien {
     quartier: string;
     centre: string;
     photo: string;
-    creneaux: Array<{ heure: string; disponible: boolean }>;
+    creneaux: Array<{ date: string; heure: string; disponible: boolean }>;
 }
