@@ -29,6 +29,8 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
           { date: "2025-01-14", heure: "14:30", disponible: true },
           { date: "2025-01-15", heure: "15:00", disponible: true },
         ],
+        latitude: 5.341012522005667,
+        longitude: -4.087780363303825,
       },
       {
         nom: "Dr. Bomisso Fulbert",
@@ -56,6 +58,8 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
           { date: "2025-02-06", heure: "14:30", disponible: true },
           { date: "2025-02-06", heure: "15:00", disponible: true },
         ],
+        latitude: 5.3024698854849905,
+        longitude: -3.9836967280753397,
       },
       {
         nom: "Dr. Coulibaly Albertine",
@@ -83,6 +87,8 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
           { date: "2025-03-06", heure: "14:30", disponible: true },
           { date: "2025-03-06", heure: "15:00", disponible: true },
         ],
+        latitude: 5.3618049050856165,
+        longitude: -3.8839353815791173,
       },
     ],
     pediatre: [
@@ -109,6 +115,8 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
           { date: "2025-04-14", heure: "14:00", disponible: false },
           { date: "2025-04-14", heure: "14:30", disponible: true },
         ],
+        latitude: 5.3333,
+        longitude: -4.0167,
       },
     ],
     dentiste: [
@@ -124,6 +132,8 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
           { date: "2025-05-10", heure: "12:00", disponible: true },
           { date: "2025-05-11", heure: "-", disponible: false },
         ],
+        latitude: 5.2868,
+        longitude: -4.0135,
       },
     ],
     cardiologue: [
@@ -139,6 +149,8 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
           { date: "2025-06-10", heure: "-", disponible: false },
           { date: "2025-06-11", heure: "10:00", disponible: true },
         ],
+        latitude: 5.3275,
+        longitude: -4.0205,
       },
     ],
     ophtalmologue: [
@@ -153,6 +165,8 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
           { date: "2025-07-10", heure: "15:00", disponible: true },
           { date: "2025-07-11", heure: "16:00", disponible: true },
         ],
+        latitude: 5.2952,
+        longitude: -4.0049,
       },
     ],
     pneumologue: [
@@ -167,6 +181,8 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
           { date: "2025-08-10", heure: "13:00", disponible: true },
           { date: "2025-08-11", heure: "14:00", disponible: true },
         ],
+        latitude: 5.3524,
+        longitude: -4.0232,
       },
     ],
     nutritionniste: [
@@ -181,6 +197,8 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
           { date: "2025-09-10", heure: "10:00", disponible: true },
           { date: "2025-09-11", heure: "11:30", disponible: true },
         ],
+        latitude: 5.2750,
+        longitude: -3.9360,
       },
     ],
   };

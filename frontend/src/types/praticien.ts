@@ -6,4 +6,6 @@ export interface Praticien {
     centre: string;
     photo: string;
     creneaux: Array<{ date: string; heure: string; disponible: boolean }>;
+    latitude?: number;
+    longitude?: number;
 }
