@@ -9,11 +9,14 @@ import { getWeekDays } from "@/lib/utils"
 import Image from "next/image"
 import { Praticien } from "@/types/praticien"
 import MapComponent from "@/components/ui/MapComponent"
+import { X,MapIcon } from "lucide-react"
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams()
   const [filteredDoctors, setFilteredDoctors] = useState<Praticien[]>([])
   const { weekDays, weekDates } = getWeekDays()
+  const [showMap, setShowMap] = useState(false)
+  const [isMapVisible, setIsMapVisible] = useState(false)
 
   useEffect(() => {
     const specialite = searchParams.get("specialite") || ""
@@ -53,8 +56,18 @@ const SearchResultsPage = () => {
     setFilteredDoctors(results)
   }, [searchParams])
 
+  useEffect(() => {
+    if (showMap) {
+      setIsMapVisible(true)
+    } else if (isMapVisible) {
+      // Attendre la fin de l'animation avant de retirer la map
+      const timeout = setTimeout(() => setIsMapVisible(false), 500)
+      return () => clearTimeout(timeout)
+    }
+  }, [showMap])
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen relative">
       <Header />
       <div className="flex-grow container mx-auto p-2 flex flex-col">
         <h1 className="text-2xl font-bold mb-6">Résultats de recherche</h1>
@@ -92,9 +105,30 @@ const SearchResultsPage = () => {
               </div>
             )}
           </div>
-          <div className="w-full h-[500px]">
-            <MapComponent doctors={filteredDoctors} />
-          </div>
+          <button
+            onClick={() => setShowMap(!showMap)}
+            className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-[#00aed6] cursor-pointer text-white shadow-lg flex items-center justify-center
+              ${showMap ? 'w-12 h-12 rounded-full' : 'px-6 py-3 rounded-full'}
+            `}
+          >
+            {showMap ? (
+              <X />
+            ) : (
+              <div className="flex items-center gap-2">
+                <MapIcon />
+                <span className="text-sm">Voir la carte</span>
+              </div>
+            )}
+          </button>
+
+          {/* Animation améliorée pour la map */}
+          {isMapVisible && (
+            <div className={`fixed inset-4 md:inset-8 bg-white z-10 rounded-3xl shadow-xl transition-all duration-500 ease-in-out
+              ${showMap ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-8 pointer-events-none'}`}
+            >
+              <MapComponent doctors={filteredDoctors} />
+            </div>
+          )}
         </div>
       </div>
     </div>
