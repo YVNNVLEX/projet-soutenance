@@ -71,7 +71,9 @@ class Patient(models.Model):
     patient_id = models.CharField(max_length=50, primary_key=True)
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
-    
+    dateNaissance = models.DateField(null=True, blank=True)
+    photo = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+    tel = models.CharField(max_length=10, unique=True)
     
 
 class Hopital(models.Model):

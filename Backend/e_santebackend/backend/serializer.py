@@ -61,7 +61,11 @@ class UserCreateSerializer(BaseUserCreateSerializer):
                 user=user,
                 patient_id= f"PAT-{str(uuid.uuid4())}",
                 nom=nom,
-                prenom=prenom
+                prenom=prenom,
+                sexe=sexe,
+                dateNaissance=date_naissance,
+                tel=tel,
+                photo=photo,
             )
         elif type_user == "praticien":
             Praticien.objects.create(
@@ -77,12 +81,14 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
 
 class PraticienSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email', read_only=True)
     class Meta:
         model = Praticien
         fields = "__all__"
         
         
 class PatientSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email', read_only=True)
     class Meta:
         model = Patient
         fields = "__all__"

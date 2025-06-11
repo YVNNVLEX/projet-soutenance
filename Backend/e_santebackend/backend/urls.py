@@ -14,4 +14,5 @@ urlpatterns = [
     # path('ticket/generate/', view=TicketGenerateView),
     path('consultation/create/', view=ConsultView),
     path('consultation/list/', view=GetConsultView),
+    path('consultation/<int:id>/', view=GetConsultView),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

@@ -7,58 +7,14 @@ import { ArrowRightIcon, ArrowRightIconHandle } from "@/components/ui/arrow-righ
 import { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import { Eye, FileText, Clock, CheckCircle, XCircle } from "lucide-react"
-
-interface Consultation {
-  patient: string;
-  date: string;
-  heure: string;
-  motif: string;
-  status: 'en attente' | 'terminé' | 'en cours' | 'annulé';
-}
-
-const consultationsFictives: Consultation[] = [
-  {
-    patient: "Kouadio Yao",
-    date: "2025-03-15",
-    heure: "09:00",
-    motif: "Détartrage",
-    status: "en attente"
-  },
-  {
-    patient: "Traoré Awa",
-    date: "2025-03-15",
-    heure: "10:00",
-    motif: "Extraction de dent",
-    status: "en attente"
-  },
-  {
-    patient: "Koffi N'Guessan",
-    date: "2025-03-15",
-    heure: "11:00",
-    motif: "Consultation carie",
-    status: "en attente"
-  },
-  {
-    patient: "Bamba Mariam",
-    date: "2025-03-15",
-    heure: "14:00",
-    motif: "Appareil dentaire",
-    status: "en attente"
-  },
-  {
-    patient: "Ouattara Issa",
-    date: "2025-03-15",
-    heure: "15:00",
-    motif: "Blanchiment dentaire",
-    status: "en attente"
-  }
-]
+import { ConsultationsFictives } from "@/api/fakedata"
+import { Consultation } from "@/types/consultation"
 
 export default function Page() {
   const user = useAuthStore((state) => state.user);
 
   const ArrowRef = useRef<ArrowRightIconHandle>(null)
-  const [consultations, setConsultations] = useState<Consultation[]>(consultationsFictives)
+  const [consultations, setConsultations] = useState<Consultation[]>(ConsultationsFictives)
 
   useEffect(() => {
     axios.get("/api/consultations").then((res) => {
@@ -80,12 +36,12 @@ export default function Page() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 7.5h16.5M4.5 6.75A1.5 1.5 0 0 1 6 5.25h12a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 18.75v-12z" />
               </svg>
             </div>
-            <div className="text-5xl font-light mt-2">4</div>
-            <div className="text-base text-muted-foreground mt-2">Prochain rendez-vous 8h30</div>
+            <div className="text-5xl font-light mt-2">{consultations.length}</div>
+            <div className="text-base text-muted-foreground mt-2">Prochain rendez-vous 09h00</div>
           </div>
         </div>
         <div className="min-h-[50vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-6">
-          <h2 className="text-xl font-semibold mb-4">Nombre du jour</h2>
+          <h2 className="text-xl font-semibold mb-4">Consultations du jour</h2>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
