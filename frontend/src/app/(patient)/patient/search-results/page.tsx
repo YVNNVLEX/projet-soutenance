@@ -1,7 +1,7 @@
 "use client"
 
 import Header from "@/components/header"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { DoctorsBySpecialty } from "@/api/fakedata"
 import CardPraticien from "@/components/ui/card"
@@ -9,14 +9,15 @@ import { getWeekDays } from "@/lib/utils"
 import Image from "next/image"
 import { Praticien } from "@/types/praticien"
 import MapComponent from "@/components/ui/MapComponent"
-import { X,MapIcon } from "lucide-react"
+import { X, MapIcon } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [filteredDoctors, setFilteredDoctors] = useState<Praticien[]>([])
   const { weekDays, weekDates } = getWeekDays()
   const [showMap, setShowMap] = useState(false)
-  const [isMapVisible, setIsMapVisible] = useState(false)
 
   useEffect(() => {
     const specialite = searchParams.get("specialite") || ""
@@ -56,16 +57,6 @@ const SearchResultsPage = () => {
     setFilteredDoctors(results)
   }, [searchParams])
 
-  useEffect(() => {
-    if (showMap) {
-      setIsMapVisible(true)
-    } else if (isMapVisible) {
-      // Attendre la fin de l'animation avant de retirer la map
-      const timeout = setTimeout(() => setIsMapVisible(false), 500)
-      return () => clearTimeout(timeout)
-    }
-  }, [showMap])
-
   return (
     <div className="flex flex-col min-h-screen relative">
       <Header />
@@ -88,6 +79,11 @@ const SearchResultsPage = () => {
                     calendrier={true}
                     jours={weekDays}
                     dates={weekDates}
+                    onReserve={() => {
+                      const specialiteSlug = doctor.specialite.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                      const nomSlug = doctor.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                      router.push(`/patient/consultations/${specialiteSlug}/${nomSlug}`);
+                    }}
                   />
                 ))}
               </div>
@@ -105,30 +101,58 @@ const SearchResultsPage = () => {
               </div>
             )}
           </div>
-          <button
+
+          {/* Bouton avec animation */}
+          <motion.button
             onClick={() => setShowMap(!showMap)}
             className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-[#00aed6] cursor-pointer text-white shadow-lg flex items-center justify-center
-              ${showMap ? 'w-12 h-12 rounded-full' : 'px-6 py-3 rounded-full'}
-            `}
+              ${showMap ? 'w-12 h-12 rounded-full' : 'px-6 py-3 rounded-full'}`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
             {showMap ? (
-              <X />
+              <motion.div
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <X />
+              </motion.div>
             ) : (
-              <div className="flex items-center gap-2">
+              <motion.div 
+                className="flex items-center gap-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.2 }}
+              >
                 <MapIcon />
                 <span className="text-sm">Voir la carte</span>
-              </div>
+              </motion.div>
             )}
-          </button>
+          </motion.button>
 
-          {/* Animation améliorée pour la map */}
-          {isMapVisible && (
-            <div className={`fixed inset-4 md:inset-8 bg-white z-10 rounded-3xl shadow-xl transition-all duration-500 ease-in-out
-              ${showMap ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-8 pointer-events-none'}`}
-            >
-              <MapComponent doctors={filteredDoctors} />
-            </div>
-          )}
+          {/* Carte avec animation */}
+          <AnimatePresence>
+            {showMap && (
+              <motion.div
+                initial={{ opacity: 0, y: 100, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 100, scale: 0.95 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                  duration: 0.5
+                }}
+                className="fixed inset-4 md:inset-8 bg-white z-10 rounded-3xl shadow-xl"
+              >
+                <MapComponent doctors={filteredDoctors} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

@@ -64,7 +64,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ doctors }) => {
   }, [doctors]);
 
   return (
-    <div className="w-full h-full" ref={mapContainer} />
+    <div className="w-full h-full overflow-hidden rounded-3xl" ref={mapContainer} />
   );
 };
 

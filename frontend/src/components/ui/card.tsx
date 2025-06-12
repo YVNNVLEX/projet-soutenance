@@ -12,6 +12,7 @@ export type CardPraticienProps = {
   calendrier?: boolean;
   jours?: string[]; 
   dates?: string[]; 
+  onReserve?: () => void;
 };
 
 const CardPraticien: React.FC<CardPraticienProps> = ({
@@ -25,6 +26,7 @@ const CardPraticien: React.FC<CardPraticienProps> = ({
   calendrier = true,
   jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
   dates = ["24 avr.", "25 avr.", "26 avr.", "27 avr.", "28 avr.", "29 avr.", "30 avr.", "1 mai", "2 mai", "3 mai", "4 mai", "5 mai"],
+  onReserve,
 }) => {
   return (
     <div className="flex flex-col md:flex-row items-center bg-gray-100 rounded-xl p-4 md:p-6 shadow-sm">
@@ -38,7 +40,10 @@ const CardPraticien: React.FC<CardPraticienProps> = ({
         <span className="text-gray-600 text-sm mb-2">{specialite}</span>
         <span className="text-gray-500 text-xs mb-1">{ville}, {quartier}</span>
         <span className="text-gray-500 text-xs mb-3">{centre}</span>
-        <button className="bg-[#00aed6] text-white px-4 py-2 rounded-md text-xs font-medium hover:bg-[#0095b6] transition cursor-pointer mb-2">Réserver une consultation</button>
+        <button 
+          className="bg-[#00aed6] text-white px-4 py-2 rounded-md text-xs font-medium hover:bg-[#0095b6] transition cursor-pointer mb-2"
+          onClick={onReserve}
+        >Réserver une consultation</button>
       </div>
       {/* Planning */}
       <div className={calendrier ? "flex flex-col items-center bg-white rounded-lg p-2 md:ml-8 border border-gray-200 w-fit overflow-x-auto" : "flex flex-col items-center bg-white rounded-lg p-2 md:ml-8 border border-gray-200 min-w-[100px] overflow-x-auto"}>
