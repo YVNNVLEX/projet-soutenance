@@ -10,6 +10,7 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
         quartier: "Yopougon",
         centre: "Centre Médical Sainte Rita",
         photo: "img/Drmodif.jpg",
+        prix_consultation: 15000,
         creneaux: [
           { date: "2025-01-10", heure: "07:00", disponible: true },
           { date: "2025-01-10", heure: "07:30", disponible: true },
@@ -39,6 +40,7 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
         quartier: "Marcory",
         centre: "Centre Médical Sainte Rita",
         photo: "img/youngdoctor.jpg",
+        prix_consultation: 15000,
         creneaux: [
           { date: "2025-02-01", heure: "07:00", disponible: true },
           { date: "2025-02-01", heure: "07:30", disponible: true },
@@ -68,6 +70,7 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
         quartier: "Yopougon",
         centre: "Centre Médical Sainte Rita",
         photo: "img/doctor.jpg",
+        prix_consultation: 15000,
         creneaux: [
           { date: "2025-03-01", heure: "07:00", disponible: true },
           { date: "2025-03-01", heure: "07:30", disponible: true },
@@ -99,6 +102,7 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
         quartier: "Cocody",
         centre: "Polyclinique Les Anges",
         photo: "https://randomuser.me/api/portraits/women/65.jpg",
+        prix_consultation: 20000,
         creneaux: [
           { date: "2025-04-10", heure: "08:00", disponible: true },
           { date: "2025-04-10", heure: "08:30", disponible: true },
@@ -127,6 +131,7 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
         quartier: "Marcory",
         centre: "Cabinet Dentaire Marcory",
         photo: "https://randomuser.me/api/portraits/men/32.jpg",
+        prix_consultation: 25000,
         creneaux: [
           { date: "2025-05-10", heure: "11:00", disponible: true },
           { date: "2025-05-10", heure: "12:00", disponible: true },
@@ -144,6 +149,7 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
         quartier: "Plateau",
         centre: "Institut du Cœur",
         photo: "https://randomuser.me/api/portraits/women/50.jpg",
+        prix_consultation: 30000,
         creneaux: [
           { date: "2025-06-10", heure: "08:30", disponible: true },
           { date: "2025-06-10", heure: "-", disponible: false },
@@ -161,6 +167,7 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
         quartier: "Treichville",
         centre: "Clinique de la Vue",
         photo: "https://randomuser.me/api/portraits/men/45.jpg",
+        prix_consultation: 35000,
         creneaux: [
           { date: "2025-07-10", heure: "15:00", disponible: true },
           { date: "2025-07-11", heure: "16:00", disponible: true },
@@ -177,6 +184,7 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
         quartier: "Adjame",
         centre: "Centre Respiratoire Abidjan",
         photo: "https://randomuser.me/api/portraits/men/60.jpg",
+        prix_consultation: 40000,
         creneaux: [
           { date: "2025-08-10", heure: "13:00", disponible: true },
           { date: "2025-08-11", heure: "14:00", disponible: true },
@@ -193,6 +201,7 @@ export const DoctorsBySpecialty: Record<string,Praticien[]> = {
         quartier: "Koumassi",
         centre: "Centre Nutrition Santé",
         photo: "https://randomuser.me/api/portraits/women/70.jpg",
+        prix_consultation: 45000,
         creneaux: [
           { date: "2025-09-10", heure: "10:00", disponible: true },
           { date: "2025-09-11", heure: "11:30", disponible: true },

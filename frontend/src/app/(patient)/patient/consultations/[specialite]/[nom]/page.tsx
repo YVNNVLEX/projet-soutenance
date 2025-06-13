@@ -1,36 +1,36 @@
 "use client";
+'use'
 
 import Header from "@/components/header";
 import MapComponent from "@/components/ui/MapComponent";
 import Image from "next/image";
 import { Calendar, CreditCard, Info, MapPin } from "lucide-react";
+import { useState } from "react";
+import { DoctorsBySpecialty } from "@/api/fakedata";
+import React from "react";
 
-const PRIX_CONSULTATION = 15000;
+// Fonction utilitaire pour normaliser les chaînes (accents, espaces, majuscules, etc.)
+function normalize(str: string) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
-const praticienFictif = {
-  nom: "Dr. Kouakou Albert",
-  specialite: "Généraliste",
-  ville: "Abidjan",
-  quartier: "Yopougon",
-  centre: "Centre Médical Sainte Rita",
-  photo: "img/doctor1.jpg",
-  creneaux: [
-    { date: "2024-06-12", heure: "07:00", disponible: true },
-    { date: "2024-06-12", heure: "10:30", disponible: true },
-    { date: "2024-06-13", heure: "07:30", disponible: true },
-    { date: "2024-06-14", heure: "08:00", disponible: false },
-    { date: "2024-06-15", heure: "08:30", disponible: true },
-    { date: "2024-06-16", heure: "09:00", disponible: true },
-    { date: "2024-06-17", heure: "09:30", disponible: false },
-    { date: "2024-06-18", heure: "10:00", disponible: true },
-    { date: "2024-06-18", heure: "13:30", disponible: true },
-  ],
-  latitude: 5.3599,
-  longitude: -4.0167,
-};
+export default function ReservationPage({ params }: { params: Promise<{ specialite: string; nom: string }> }) {
+  const { specialite, nom } = React.use(params);
+  // Recherche du praticien avec normalisation
+  const praticiens = DoctorsBySpecialty[specialite] || [];
+  const praticien = praticiens.find(p => normalize(p.nom) === nom && normalize(p.specialite) === specialite);
+  const [isForProche, setIsForProche] = useState(false);
+  const [isUrgent, setIsUrgent] = useState(false);
+  const [useProcheNumero, setUseProcheNumero] = useState(false);
 
-export default function ReservationPage() {
-  const praticien = praticienFictif;
+  if (!praticien) {
+    return <div>Praticien non trouvé</div>;
+  }
 
   return (
     <div className="min-h-screen bg-[#f7f8fa]">
@@ -52,7 +52,7 @@ export default function ReservationPage() {
             <span className="text-gray-500 text-sm">{praticien.centre}</span>
             <div className="flex items-center gap-3 mt-2">
               <CreditCard className="w-5 h-5 text-[#00aed6]" />
-              <span className="text-base font-semibold">{PRIX_CONSULTATION} FCFA</span>
+              <span className="text-base font-semibold">{praticien.prix_consultation} FCFA</span>
               <span className="text-xs text-gray-400">Consultation</span>
             </div>
           </div>
@@ -71,19 +71,49 @@ export default function ReservationPage() {
             <span className="font-semibold text-gray-800">Informations à connaître</span>
           </div>
           <ul className="list-disc ml-6 text-gray-600 text-sm flex flex-col gap-1">
-            <li>Merci d'arriver 10 minutes avant l'heure du rendez-vous.</li>
-            <li>Munissez-vous de votre pièce d'identité et de votre carnet de santé.</li>
-            <li>Le paiement s'effectue sur place, en espèces ou mobile money.</li>
-            <li>Annulation possible jusqu'à 24h avant la consultation.</li>
+            <li>Merci d&apos;arriver 10 minutes avant l&apos;heure du rendez-vous.</li>
+            <li>Munissez-vous de votre pièce d&apos;identité et de votre carnet de santé.</li>
+            <li>Le paiement s&apos;effectue sur place, en espèces ou mobile money.</li>
+            <li>Annulation possible jusqu&apos;à 24h avant la consultation.</li>
           </ul>
         </div>
         {/* Formulaire de réservation */}
-        <div className="bg-white rounded-2xl shadow p-6 max-w-lg mx-auto">
+        <div className="bg-white rounded-2xl shadow p-6 w-full max-w-full mx-auto">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Calendar className="w-5 h-5 text-[#00aed6]" />Réserver une consultation</h2>
           <form className="flex flex-col gap-4">
+            <div className="flex items-center gap-2 mb-2">
+              <label className="text-sm font-medium">Pour qui ?</label>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${!isForProche ? 'bg-[#00aed6] text-white' : 'bg-gray-200 text-gray-700'}`}
+                  onClick={() => setIsForProche(false)}
+                >
+                  Pour moi
+                </button>
+                <button
+                  type="button"
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${isForProche ? 'bg-[#00aed6] text-white' : 'bg-gray-200 text-gray-700'}`}
+                  onClick={() => setIsForProche(true)}
+                >
+                  Pour un proche
+                </button>
+              </div>
+            </div>
+            {isForProche && (
+              <div>
+                <label className="block text-sm font-medium mb-1">Nom complet du proche</label>
+                <input type="text" className="w-full border rounded-md px-3 py-2" required />
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium mb-1">Date</label>
-              <input type="date" className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aed6]" required />
+              <select className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aed6]" required>
+                <option value="">Sélectionnez une date</option>
+                {praticien.creneaux.filter(c => c.disponible).map((c, i) => (
+                  <option key={i} value={c.date}>{c.date}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Heure</label>
@@ -94,13 +124,42 @@ export default function ReservationPage() {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Nom complet</label>
-              <input type="text" className="w-full border rounded-md px-3 py-2" required />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Téléphone</label>
-              <input type="tel" className="w-full border rounded-md px-3 py-2" required />
+            {isForProche && (
+              <div className="flex items-center gap-2 mb-2">
+                <label className="text-sm font-medium">Numéro de téléphone</label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className={`px-4 py-2 rounded-md text-sm font-medium ${!useProcheNumero ? 'bg-[#00aed6] text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setUseProcheNumero(false)}
+                  >
+                    Mon numéro
+                  </button>
+                  <button
+                    type="button"
+                    className={`px-4 py-2 rounded-md text-sm font-medium ${useProcheNumero ? 'bg-[#00aed6] text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setUseProcheNumero(true)}
+                  >
+                    Numéro du proche
+                  </button>
+                </div>
+              </div>
+            )}
+            {isForProche && useProcheNumero && (
+              <div>
+                <label className="block text-sm font-medium mb-1">Numéro du proche</label>
+                <input type="tel" className="w-full border rounded-md px-3 py-2" required />
+              </div>
+            )}
+            <div className="flex items-center gap-2 mt-2">
+              <label className="text-sm font-medium">Consultation urgente ?</label>
+              <button
+                type="button"
+                className={`px-4 py-2 rounded-md text-sm font-medium ${isUrgent ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                onClick={() => setIsUrgent(!isUrgent)}
+              >
+                {isUrgent ? 'Oui' : 'Non'}
+              </button>
             </div>
             <button type="submit" className="bg-[#00aed6] text-white px-4 py-2 rounded-md font-medium hover:bg-[#0095b6] transition">Confirmer la réservation</button>
           </form>
