@@ -12,6 +12,15 @@ import MapComponent from "@/components/ui/MapComponent"
 import { X, MapIcon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
+function normalize(str) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 const SearchResultsPage = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -80,8 +89,8 @@ const SearchResultsPage = () => {
                     jours={weekDays}
                     dates={weekDates}
                     onReserve={() => {
-                      const specialiteSlug = doctor.specialite.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-                      const nomSlug = doctor.nom.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                      const specialiteSlug = normalize(doctor.specialite);
+                      const nomSlug = normalize(doctor.nom);
                       router.push(`/patient/consultations/${specialiteSlug}/${nomSlug}`);
                     }}
                   />
