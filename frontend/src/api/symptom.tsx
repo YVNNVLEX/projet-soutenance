@@ -1,0 +1,27 @@
+import { Thermometer, Sun, Droplet, Brain, Activity, Zap, Smile, AlertTriangle, Eye, EyeOff, Frown, HeartPulse, ShieldAlert, ShieldCheck, Stethoscope, CloudDrizzle, Bug, AlertCircle } from "lucide-react";
+
+export const commonSymptoms = [
+    { label: "Fièvre", icon: <Thermometer className="w-4 h-4 mr-1" /> },
+    { label: "Frissons", icon: <Sun className="w-4 h-4 mr-1" /> },
+    { label: "Sueurs", icon: <Droplet className="w-4 h-4 mr-1" /> },
+    { label: "Maux de tête", icon: <Brain className="w-4 h-4 mr-1" /> },
+    { label: "Douleurs musculaires", icon: <Activity className="w-4 h-4 mr-1" /> },
+    { label: "Fatigue intense", icon: <Zap className="w-4 h-4 mr-1" /> },
+    { label: "Nausées", icon: <Smile className="w-4 h-4 mr-1" /> },
+    { label: "Vomissements", icon: <AlertTriangle className="w-4 h-4 mr-1" /> },
+    { label: "Sensibilité à la lumière", icon: <Sun className="w-4 h-4 mr-1" /> },
+    { label: "Troubles de la vision", icon: <EyeOff className="w-4 h-4 mr-1" /> },
+    { label: "Douleur oculaire", icon: <Eye className="w-4 h-4 mr-1" /> },
+    { label: "Larmoiement", icon: <Frown className="w-4 h-4 mr-1" /> },
+    { label: "Rougeur des yeux", icon: <Eye className="w-4 h-4 mr-1" /> },
+    { label: "Sensation de sable dans les yeux", icon: <Eye className="w-4 h-4 mr-1" /> },
+    { label: "Douleur thoracique", icon: <HeartPulse className="w-4 h-4 mr-1" /> },
+    { label: "Paralysie d'un côté", icon: <ShieldAlert className="w-4 h-4 mr-1" /> },
+    { label: "Raideur de la nuque", icon: <Stethoscope className="w-4 h-4 mr-1" /> },
+    { label: "Douleur abdominale intense", icon: <AlertCircle className="w-4 h-4 mr-1" /> },
+    { label: "Perte de connaissance", icon: <ShieldCheck className="w-4 h-4 mr-1" /> },
+    { label: "Démangeaisons", icon: <Bug className="w-4 h-4 mr-1" /> },
+    { label: "Nez qui coule", icon: <CloudDrizzle className="w-4 h-4 mr-1" /> },
+    { label: "Éternuements", icon: <CloudDrizzle className="w-4 h-4 mr-1" /> },
+    { label: "Toux", icon: <AlertTriangle className="w-4 h-4 mr-1" /> },
+  ];

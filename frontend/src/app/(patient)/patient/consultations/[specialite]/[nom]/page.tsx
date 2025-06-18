@@ -4,20 +4,12 @@
 import Header from "@/components/header";
 import MapComponent from "@/components/ui/MapComponent";
 import Image from "next/image";
-import { Calendar, CreditCard, Info, MapPin } from "lucide-react";
+import { Calendar, CreditCard, Info, MapPin, FileText, X, Search } from "lucide-react";
 import { useState } from "react";
 import { DoctorsBySpecialty } from "@/api/fakedata";
 import React from "react";
-
-// Fonction utilitaire pour normaliser les chaînes (accents, espaces, majuscules, etc.)
-function normalize(str: string) {
-  return str
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+import { commonSymptoms } from "@/api/symptom";
+import { normalize } from "@/lib/utils";
 
 export default function ReservationPage({ params }: { params: Promise<{ specialite: string; nom: string }> }) {
   const { specialite, nom } = React.use(params);
@@ -27,6 +19,24 @@ export default function ReservationPage({ params }: { params: Promise<{ speciali
   const [isForProche, setIsForProche] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
   const [useProcheNumero, setUseProcheNumero] = useState(false);
+  const [symptomInput, setSymptomInput] = useState("");
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  // Symptômes avec icônes
+  
+
+  const filteredSymptoms = commonSymptoms.filter(
+    s => s.label.toLowerCase().includes(symptomInput.toLowerCase()) && !selectedSymptoms.includes(s.label)
+  );
+
+  const addSymptom = (symptom: string) => {
+    if (!selectedSymptoms.includes(symptom)) {
+      setSelectedSymptoms([...selectedSymptoms, symptom]);
+      setSymptomInput("");
+    }
+  };
+  const removeSymptom = (symptom: string) => {
+    setSelectedSymptoms(selectedSymptoms.filter(s => s !== symptom));
+  };
 
   if (!praticien) {
     return <div>Praticien non trouvé</div>;
@@ -161,6 +171,85 @@ export default function ReservationPage({ params }: { params: Promise<{ speciali
                 {isUrgent ? 'Oui' : 'Non'}
               </button>
             </div>
+
+            {/* Sélection des symptômes améliorée */}
+            <div>
+              <label className="block text-sm font-medium mb-1 flex items-center gap-1">
+                <Info className="w-4 h-4 text-[#00aed6] mr-1" />
+                Symptômes observés
+              </label>
+              <div className="mb-2 relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2">
+                  <Search className="w-4 h-4 text-gray-400" />
+                </span>
+                <input
+                  type="text"
+                  className="w-full border rounded-md pl-10 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aed6]"
+                  placeholder="Rechercher ou ajouter un symptôme..."
+                  value={symptomInput}
+                  onChange={e => setSymptomInput(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && symptomInput.trim()) {
+                      addSymptom(symptomInput.trim());
+                      e.preventDefault();
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {selectedSymptoms.map(symptom => (
+                  <span key={symptom} className="flex items-center bg-red-400 text-white rounded-full px-3 py-1 text-sm font-medium">
+                    {commonSymptoms.find(s => s.label === symptom)?.icon}
+                    {symptom}
+                    <button type="button" className="ml-2" onClick={() => removeSymptom(symptom)}>
+                      <X className="w-4 h-4" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <div className="mb-2">
+                <span className="block text-sm font-semibold mb-1">Symptômes courants :</span>
+                <div className="flex flex-wrap gap-2">
+                  {filteredSymptoms.map(symptom => (
+                    <button
+                      type="button"
+                      key={symptom.label}
+                      className="bg-red-300 hover:bg-red-400 text-white rounded-full px-3 py-1 text-sm font-medium transition flex items-center"
+                      onClick={() => addSymptom(symptom.label)}
+                    >
+                      {symptom.icon}
+                      {symptom.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Input fichier amélioré */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Pièce jointe (examens, ordonnances, etc.)</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-3">
+                  <FileText className="w-5 h-5 text-[#00aed6]" />
+                </span>
+                <input
+                  type="file"
+                  className="pl-10 w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aed6] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#00aed6]/10 file:text-[#00aed6]"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Formats acceptés : PDF, JPG, PNG</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Notes supplémentaires</label>
+              <textarea 
+                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aed6]"
+                rows={4}
+                placeholder="Décrivez vos symptômes ou ajoutez des informations importantes..."
+              />
+            </div>
+
             <button type="submit" className="bg-[#00aed6] text-white px-4 py-2 rounded-md font-medium hover:bg-[#0095b6] transition">Confirmer la réservation</button>
           </form>
         </div>
