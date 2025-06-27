@@ -10,6 +10,7 @@ import { DoctorsBySpecialty } from "@/api/fakedata";
 import React from "react";
 import { commonSymptoms } from "@/api/symptom";
 import { normalize } from "@/lib/utils";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function ReservationPage({ params }: { params: Promise<{ specialite: string; nom: string }> }) {
   const { specialite, nom } = React.use(params);
@@ -21,6 +22,7 @@ export default function ReservationPage({ params }: { params: Promise<{ speciali
   const [useProcheNumero, setUseProcheNumero] = useState(false);
   const [symptomInput, setSymptomInput] = useState("");
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [showModal, setShowModal] = useState(false);
   // Symptômes avec icônes
   
 
@@ -38,12 +40,36 @@ export default function ReservationPage({ params }: { params: Promise<{ speciali
     setSelectedSymptoms(selectedSymptoms.filter(s => s !== symptom));
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Ici, tu ajoutes la logique pour enregistrer la consultation
+    setShowModal(true);
+  };
+
   if (!praticien) {
     return <div>Praticien non trouvé</div>;
   }
 
   return (
     <div className="min-h-screen bg-[#f7f8fa]">
+      {/* Modal de confirmation */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="flex flex-col items-center gap-2">
+          <svg className="w-16 h-16 text-[#00aed6] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke="#00aed6" strokeWidth="2" fill="#e6f7fb" />
+            <path stroke="#00aed6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M8 12l2 2l4-4" />
+          </svg>
+          <h3 className="text-xl font-bold text-gray-800 text-center">Votre consultation a été validée !</h3>
+          <p className="text-gray-600 text-center mb-2">Vous recevrez une confirmation par notification ou email.</p>
+          <button
+            className="bg-[#00aed6] hover:bg-[#0095b6] text-white px-6 py-2 rounded-md font-medium transition"
+            onClick={() => setShowModal(false)}
+          >
+            Fermer
+          </button>
+        </DialogContent>
+      </Dialog>
+      {/* Fin Modal */}
       <Header />
       <div className="container mx-auto py-8 px-2 md:px-0 flex flex-col gap-8">
         {/* Carte praticien */}
@@ -90,7 +116,7 @@ export default function ReservationPage({ params }: { params: Promise<{ speciali
         {/* Formulaire de réservation */}
         <div className="bg-white rounded-2xl shadow p-6 w-full max-w-full mx-auto">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Calendar className="w-5 h-5 text-[#00aed6]" />Réserver une consultation</h2>
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="flex items-center gap-2 mb-2">
               <label className="text-sm font-medium">Pour qui ?</label>
               <div className="flex items-center gap-2">

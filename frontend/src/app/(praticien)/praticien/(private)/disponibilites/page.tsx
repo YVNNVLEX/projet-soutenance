@@ -10,19 +10,10 @@ import {  PlusIcon, TrashIcon } from "lucide-react";
 import { useAuthStore } from "@/lib/zustand/auth-store";
 import axios from "axios";
 import Toast from "@/components/ui/Toast";
+import { Disponibilite } from "@/types/praticien";
+import { FormValues } from "@/types/praticien";
 
-interface FormValues {
-  date: Date | null;
-  slots: { start: string; end: string }[];
-}
 
-interface Disponibilite {
-  disponibilite_id: number;
-  date_disponibilite: string;
-  heure_debut: string;
-  heure_fin: string;
-  praticien_id: number;
-}
 
 export default function DisponibilitePage() {
   const user = useAuthStore((state) => state.user);

@@ -10,3 +10,16 @@ export interface Praticien {
     latitude?: number;
     longitude?: number;
 }
+
+export interface Disponibilite {
+    disponibilite_id: number;
+    date_disponibilite: string;
+    heure_debut: string;
+    heure_fin: string;
+    praticien_id: number;
+}
+
+export interface FormValues {
+    date: Date | null;
+    slots: { start: string; end: string }[];
+  }
