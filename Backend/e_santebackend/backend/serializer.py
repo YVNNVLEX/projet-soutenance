@@ -6,7 +6,8 @@ from .utils.user_utils import get_praticien_id_from_user
 from datetime import datetime
 
 class UserCreateSerializer(BaseUserCreateSerializer):
-    dateNaissance = serializers.DateField(required=False, format="%d/%m/%Y")
+    dateNaissance = serializers.DateField(required=False, format="%d/%m/%Y",input_formats=["%d/%m/%Y", "%Y-%m-%d"])
+    
     hopital = serializers.PrimaryKeyRelatedField(queryset=Hopital.objects.all(), required=False)
     specialite = serializers.CharField(required=False)
 
@@ -22,62 +23,63 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         }
 
     def create(self, validated_data):
-        
-        hopital = validated_data.pop("hopital", None)
+        hopital = validated_data.get("hopital", None)
+        nom = validated_data.get("nom", "")
+        prenom = validated_data.get("prenom", "")
+        tel = validated_data.get("tel", "")
+        type_user = validated_data.get("type", "")
+        photo = validated_data.get("photo", None)
+        date_naissance = validated_data.get("dateNaissance", None)
+        sexe = validated_data.get("sexe", "")
+        specialite = validated_data.get("specialite", "")
+        email = validated_data.get("email", "")
 
+        
         user = super().create(validated_data)
-        
-        nom = validated_data.pop("nom", "")
-        prenom = validated_data.pop("prenom", "")
-        tel = validated_data.pop("tel", "")
-        type_user = validated_data.pop("type", "")
-        photo = validated_data.pop("photo", None)
-        date_naissance = validated_data.pop("dateNaissance", None)
-        sexe = validated_data.pop("sexe", "")
-        specialite = validated_data.pop("specialite", "")
 
-        # Création de l'utilisateur
-
-        # Ajout des champs personnalisés
+        # Mise à jour des attributs supplémentaires
         user.nom = nom
         user.prenom = prenom
         user.tel = tel
         user.type = type_user
         user.dateNaissance = date_naissance
         user.sexe = sexe
+        user.specialite = specialite
         if photo:
             user.photo = photo
-            
         if hopital:
             user.hopital = hopital
-            
-        user.specialite = specialite
-        
         user.save()
 
-
+        # Création du profil secondaire
         if type_user == "patient":
             Patient.objects.create(
                 user=user,
-                patient_id= f"PAT-{str(uuid.uuid4())}",
+                patient_id=f"PAT-{uuid.uuid4()}",
                 nom=nom,
                 prenom=prenom,
                 sexe=sexe,
                 dateNaissance=date_naissance,
                 tel=tel,
                 photo=photo,
+                email=email,
             )
         elif type_user == "praticien":
             Praticien.objects.create(
                 user=user,
-                praticien_id=f"MED-{str(uuid.uuid4())}",
+                praticien_id=f"MED-{uuid.uuid4()}",
                 nom=nom,
                 prenom=prenom,
                 specialite=specialite,
+                dateNaissance=date_naissance,
+                tel=tel,
+                email=email,
                 hopital_id=user.hopital_id
             )
 
         return user
+
+
 
 
 class PraticienSerializer(serializers.ModelSerializer):

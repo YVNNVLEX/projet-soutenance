@@ -44,7 +44,6 @@ def DispoView(request, id=None):
 def DispoDeleteView(request, id=None):
     disponibilite = Disponibilite.objects.get(disponibilite_id=id)
     print(disponibilite)
-    # disponibilite.delete()
     return Response({
         "message": "Disponibilité supprimée avec succès",
         "status": status.HTTP_204_NO_CONTENT
