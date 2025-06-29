@@ -24,7 +24,7 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Le superutilisateur doit avoir is_superuser=True.')
 
-        return self.create_user(email=email, tel=tel, password=password, **extra_fields)
+        return self.create_user(email=email, password=password, **extra_fields)
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -67,13 +67,28 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
 
 class Patient(models.Model):
+    USER_SEXE_CHOICES = (
+        ('m', 'M'),
+        ('f', 'F')
+    )
+    
+    
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='patient_profile')
     patient_id = models.CharField(max_length=50, primary_key=True)
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     dateNaissance = models.DateField(null=True, blank=True)
     photo = models.ImageField(upload_to='profile_images/', null=True, blank=True)
+    sexe = models.CharField(max_length=1, choices=USER_SEXE_CHOICES)
     tel = models.CharField(max_length=10, unique=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
+    adresse = models.CharField(max_length=255, null=True, blank=True)
+    taille = models.CharField(max_length=10, null=True, blank=True)
+    poids = models.CharField(max_length=10, null=True, blank=True)
+    groupe_sanguin = models.CharField(max_length=5, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.prenom} {self.nom}"
     
 
 class Hopital(models.Model):
@@ -93,6 +108,9 @@ class Praticien(models.Model):
     praticien_id = models.CharField(max_length=50, primary_key=True)
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
+    tel = models.CharField(max_length=10, unique=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
+    dateNaissance = models.DateField(null=True, blank=True)
     specialite = models.CharField(max_length=255)
     hopital = models.ForeignKey(Hopital, on_delete= models.CASCADE)
 

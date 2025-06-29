@@ -11,15 +11,8 @@ import { Praticien } from "@/types/praticien"
 import MapComponent from "@/components/ui/MapComponent"
 import { X, MapIcon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { normalize } from "@/lib/utils"
 
-function normalize(str) {
-  return str
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams()

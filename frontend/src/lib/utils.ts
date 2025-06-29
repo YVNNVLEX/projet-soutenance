@@ -35,3 +35,12 @@ export const getWeekDays = () => {
   
   return { weekDays, weekDates };
 };
+
+export function normalize(str : string) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}

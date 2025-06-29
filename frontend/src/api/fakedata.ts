@@ -1,5 +1,5 @@
 import { Praticien } from "@/types/praticien";
-import { Consultation } from "@/types/consultation";
+import { Consultation, ConsultationPatient } from "@/types/consultation";
 
 export const DoctorsBySpecialty: Record<string,Praticien[]> = {
     generaliste: [
@@ -247,5 +247,30 @@ export  const ConsultationsFictives: Consultation[] = [
       heure: "15:00",
       motif: "Blanchiment dentaire",
       status: "en attente"
+    }
+  ]
+
+export const ConsultationsPatientFictives: ConsultationPatient[] = [
+    {
+      id: 1,
+      nomPraticien: "Dr. Kouakou Albert",
+      specialite: "Généraliste",
+      photoPraticien: "/img/Drmodif.jpg",
+      date: "2025-03-15",
+      heure: "09:00",
+      motif: "Consultation générale",
+      statut: "terminé",
+      adresse: "Centre Médical Sainte Rita, Yopougon"
+    },
+    {
+      id: 2,
+      nomPraticien: "Dr. Bomisso Fulbert",
+      specialite: "Généraliste",
+      photoPraticien: "/img/youngdoctor.jpg",
+      date: "2025-03-20",
+      heure: "14:30",
+      motif: "Suivi médical",
+      statut: "en attente",
+      adresse: "Centre Médical Sainte Rita, Marcory"
     }
   ]
